@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:message_app/home_widget.dart';
-import 'package:message_app/list_widget.dart';
-import 'package:message_app/profile_widget.dart';
+import 'package:message_app/widgets/home_widget.dart';
+import 'package:message_app/widgets/list_widget.dart';
+import 'package:message_app/widgets/profile_widget.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = 'home';
-
   HomePage({Key key}) : super(key: key);
+
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -14,10 +14,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  String _title = "Home";
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      switch(index) {
+        case 0: { _title = 'Home'; }
+        break;
+        case 1: { _title = 'Messages'; }
+        break;
+        case 2: { _title = 'Profile'; }
+        break;
+      }
     });
   }
 
@@ -25,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Messages"),
+        title: Text(_title),
       ),
       body: Center(
         child: <Widget>[

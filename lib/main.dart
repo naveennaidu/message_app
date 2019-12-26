@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
-import 'chatting_page.dart';
+import 'pages/home_page.dart';
+import 'pages/chatting_page.dart';
 
 void main() => runApp(MyApp());
 
