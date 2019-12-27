@@ -1,23 +1,18 @@
 import 'package:avatar_letter/avatar_letter.dart';
 import 'package:flutter/material.dart';
+import 'package:message_app/pages/signup_page.dart';
 
-class ProfileWidget extends StatelessWidget {
+class ProfileWidget extends StatefulWidget {
+  const ProfileWidget({Key key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return ProfileForm();
-  }
-
-}
-
-class ProfileForm extends StatefulWidget {
   @override
   ProfileFormState createState() {
     return ProfileFormState();
   }
+
 }
 
-class ProfileFormState extends State<ProfileForm> {
+class ProfileFormState extends State<ProfileWidget> {
 
   final _formKey = GlobalKey<FormState>();
   String name = "naveen";
@@ -66,15 +61,10 @@ class ProfileFormState extends State<ProfileForm> {
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Center(
               child: RaisedButton(
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    setState(() {
-                      name = _usernameController.text;
-                    });
-                    FocusScope.of(context).unfocus();
-                  }
+                onPressed: () async {
+                  Navigator.pushReplacementNamed(context, SignupPage.routeName);
                 },
-                child: Text('Update'),
+                child: Text('Log Out'),
               ),
             ),
           ),
