@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:message_app/pages/chatting_page.dart';
 
 class HomeWidget extends StatelessWidget {
@@ -7,13 +8,12 @@ class HomeWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-            "No. of users online:",
-          style: TextStyle(fontSize: 30),
-        ),
         Padding(
           padding: const EdgeInsets.only(bottom: 100.0),
-          child: Text("5", style: TextStyle(color: Colors.green, fontSize: 30, fontWeight: FontWeight.bold),),
+          child: Text(
+              "Start chatting with random stranger",
+            style: TextStyle(fontSize: 20),
+          ),
         ),
         Center(
           child: RaisedButton(
@@ -21,7 +21,10 @@ class HomeWidget extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text('Connect', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
             ),
-            onPressed: () {
+            onPressed: () async {
+              final storage = new FlutterSecureStorage();
+              String token = await storage.read(key: "token");
+
               Navigator.pushNamed(context, ChattingPage.routeName);
             },
           ),
