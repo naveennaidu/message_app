@@ -28,15 +28,23 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: Text(
-        "Messages App",
-        style: TextStyle(fontSize: 30),
-      )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.message, size: 50),
+            Text(
+              "Messages App",
+              style: TextStyle(fontSize: 30),
+            ),
+
+          ],
+        ),
+      ),
     );
   }
 
   void startTimer() {
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 2), () {
       navigateUser();
     });
   }
@@ -48,7 +56,7 @@ class _SplashPageState extends State<SplashPage> {
 
     if (username != null && password != null) {
       HttpService _httpService = new HttpService();
-      result = await _httpService.authenticate(username, password);
+      result = await _httpService.authenticateLogin(username, password);
     }
 
     if (result) {

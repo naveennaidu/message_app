@@ -65,31 +65,69 @@ class _SignupPageState extends State<SignupPage> {
               children: <Widget>[
                 emailField,
                 passwordField,
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RaisedButton(
-                    padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                    onPressed: () async {
-                      if (_formKey.currentState.validate()) {
-                        var result = await _httpService.authenticate(
-                            _usernameController.text, _passwordController.text);
-                        if (result) {
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          prefs?.setString("username", _usernameController.text);
-                          prefs?.setString("password", _passwordController.text);
-                          Navigator.pushReplacementNamed(
-                              context, HomePage.routeName);
-                        } else {
-                          Scaffold.of(context).showSnackBar(
-                              SnackBar(content: Text("please try again")));
-                        }
-                      }
-                    },
-                    child: Text(
-                      "Sign Up",
-                    ),
-                  ),
-                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: RaisedButton(
+                          padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          onPressed: () async {
+                            if (_formKey.currentState.validate()) {
+                              var result =
+                                  await _httpService.authenticateSignup(
+                                      _usernameController.text,
+                                      _passwordController.text);
+                              if (result) {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs?.setString(
+                                    "username", _usernameController.text);
+                                prefs?.setString(
+                                    "password", _passwordController.text);
+                                Navigator.pushReplacementNamed(
+                                    context, HomePage.routeName);
+                              } else {
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text("please try again")));
+                              }
+                            }
+                          },
+                          child: Text(
+                            "Sign Up",
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: RaisedButton(
+                          padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          onPressed: () async {
+                            if (_formKey.currentState.validate()) {
+                              var result = await _httpService.authenticateLogin(
+                                  _usernameController.text,
+                                  _passwordController.text);
+                              if (result) {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs?.setString(
+                                    "username", _usernameController.text);
+                                prefs?.setString(
+                                    "password", _passwordController.text);
+                                Navigator.pushReplacementNamed(
+                                    context, HomePage.routeName);
+                              } else {
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text("please try again")));
+                              }
+                            }
+                          },
+                          child: Text(
+                            "Log In",
+                          ),
+                        ),
+                      ),
+                    ]),
               ],
             ),
           );

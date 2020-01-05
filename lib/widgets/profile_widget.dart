@@ -1,6 +1,7 @@
 import 'package:avatar_letter/avatar_letter.dart';
 import 'package:flutter/material.dart';
 import 'package:message_app/pages/signup_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileWidget extends StatefulWidget {
   const ProfileWidget({Key key}) : super(key: key);
@@ -9,67 +10,78 @@ class ProfileWidget extends StatefulWidget {
   ProfileFormState createState() {
     return ProfileFormState();
   }
-
 }
 
 class ProfileFormState extends State<ProfileWidget> {
+  var username;
 
-  final _formKey = GlobalKey<FormState>();
-  String name = "naveen";
-  final _usernameController = TextEditingController(text: "Naveen");
+  Future<String> getName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    username = prefs.getString("username");
+    return Future.value(username);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 40.0),
-            child: Center(
-              child: AvatarLetter(
-                size: 80,
-                backgroundColor: Colors.lightBlue,
-                textColor: Colors.white,
-                fontSize: 40,
-                upperCase: true,
-                numberLetters: 1,
-                letterType: LetterType.Circular,
-                text: name,
-                backgroundColorHex: null,
-                textColorHex: null,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextFormField(
-              decoration: InputDecoration(
-                labelText: "Username",
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter your username';
-                }
-                return null;
-              },
-              controller: _usernameController,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Center(
-              child: RaisedButton(
-                onPressed: () async {
-                  Navigator.pushReplacementNamed(context, SignupPage.routeName);
-                },
-                child: Text('Log Out'),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return FutureBuilder<String>(
+      future: getName(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if( snapshot.connectionState == ConnectionState.waiting){
+          return  Center(child: Text('Please wait its loading...'));
+        }else{
+          if (snapshot.hasError)
+            return Center(child: Text('Error: ${snapshot.error}'));
+          else
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 40.0),
+                  child: Center(
+                    child: AvatarLetter(
+                      size: 80,
+                      backgroundColor: Colors.lightBlue,
+                      textColor: Colors.white,
+                      fontSize: 40,
+                      upperCase: true,
+                      numberLetters: 1,
+                      letterType: LetterType.Circular,
+                      text: snapshot.data,
+                      backgroundColorHex: null,
+                      textColorHex: null,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text(
+                      snapshot.data.toUpperCase(),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 200.0),
+                  child: Center(
+                    child: RaisedButton(
+                      onPressed: () async {
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        prefs?.clear();
+                        Navigator.pushReplacementNamed(context, SignupPage.routeName);
+                      },
+                      child: Text('LOG OUT', style: TextStyle(fontWeight: FontWeight.bold)),
+                      color: Colors.red,
+                      textColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+        }
+      }
+
+
     );
   }
 }
