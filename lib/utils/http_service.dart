@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:message_app/models/chat_model.dart';
 import 'dart:async';
 
 import 'package:message_app/models/message.dart';
@@ -15,6 +16,8 @@ class HttpService {
     if (response.statusCode == HttpStatus.created) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs?.setString("token", token);
+    } else {
+      print("server error");
     }
     return response.statusCode == HttpStatus.created;
   }
@@ -27,6 +30,8 @@ class HttpService {
     if (response.statusCode == HttpStatus.ok) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs?.setString("token", token);
+    } else {
+      print("server error");
     }
     return response.statusCode == HttpStatus.ok;
   }
@@ -56,10 +61,6 @@ class HttpService {
   Future<List<Message>> fetchMessages(String url, String token) async {
     return http.get(url, headers: {"Authorization": token}).then(
         (http.Response response) {
-//          var x = (json.decode(json.decode(response.body)["messages"]))
-//            .map((p) => Message.fromJson(p))
-//            .toList();
-//          print(x[0].text);
       if (response.statusCode == 200) {
         return (json.decode(json.decode(response.body)["messages"]))
             .map<Message>((p) => Message.fromJson(p))
@@ -68,5 +69,18 @@ class HttpService {
         throw Exception('Failed to load post');
       }
     });
+  }
+
+  Future<List<ChatModel>> fetchChats(String url, String token) async {
+    return http.get(url, headers: {"Authorization": token}).then(
+            (http.Response response) {
+          if (response.statusCode == 200) {
+            return (json.decode(json.decode(response.body)["chatrooms"]))
+                .map<ChatModel>((p) => ChatModel.fromJson(p))
+                .toList();
+          } else {
+            throw Exception('Failed to load post');
+          }
+        });
   }
 }

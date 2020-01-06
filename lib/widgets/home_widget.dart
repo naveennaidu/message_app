@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:message_app/pages/chatting_page.dart';
 import 'package:message_app/utils/http_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeWidget extends StatelessWidget {
   HttpService _httpService = new HttpService();
@@ -27,8 +27,8 @@ class HomeWidget extends StatelessWidget {
               ),
             ),
             onPressed: () async {
-              final storage = new FlutterSecureStorage();
-              String token = await storage.read(key: "token");
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String token = prefs.getString("token");
 
               String endpoint = "token"; //await _httpService.post("", token);
 

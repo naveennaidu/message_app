@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:message_app/models/message.dart';
 import 'package:message_app/utils/http_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,8 +22,9 @@ class _ChattingPageState extends State<ChattingPage> {
   HttpService _httpService = new HttpService();
   bool _isComposing = false;
   String token;
-
-  List<Message> listmessage;
+  ScrollController _scrollController = new ScrollController();
+  Timer timer;
+  Future<List<Message>> messages;
 
   BubbleStyle styleMe = BubbleStyle(
     nip: BubbleNip.rightTop,
@@ -37,11 +41,35 @@ class _ChattingPageState extends State<ChattingPage> {
   );
 
   void _handleSubmitted(String text) {
-    _httpService.post("https://stormy-savannah-90253.herokuapp.com/api/message?body=$text", token);
+    _httpService.post(
+        "https://stormy-savannah-90253.herokuapp.com/api/message/2?body=$text",
+        token);
     _textController.clear();
     setState(() {
       _isComposing = false;
+      messages = makeFetchRequest();
     });
+    Timer(
+        Duration(milliseconds: 500),
+        () => _scrollController
+            .jumpTo(0.0));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    messages = makeFetchRequest();
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      setState(() {
+        messages = makeFetchRequest();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -57,26 +85,42 @@ class _ChattingPageState extends State<ChattingPage> {
             children: <Widget>[
               Flexible(
                 child: FutureBuilder<List<Message>>(
-                  future: makePostRequest(),
-                  builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot){
-                    if(snapshot.connectionState == ConnectionState.waiting){
-                      return CircularProgressIndicator();
+                  future: messages,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Message>> snapshot) {
+                    if (snapshot.hasData) {
+                      var reversedList = snapshot.data.reversed.toList();
+                      return ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Bubble(
+                            style: reversedList[index].user_id == 5
+                                ? styleMe
+                                : styleSomebody,
+                            child: RichText(
+                              text: TextSpan(
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                  children: [
+                                    TextSpan(
+                                        text: "${reversedList[index].text}"),
+                                    TextSpan(
+                                      text:
+                                          "${" " + DateFormat('kk:mm:a').format(DateTime.parse(reversedList[index].created_at))}",
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.black),
+                                    ),
+                                  ]),
+                            ),
+                          );
+                        },
+                        itemCount: snapshot.data.length,
+                        controller: _scrollController,
+                        reverse: true,
+                      );
                     } else {
-                      if (snapshot.hasError)
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      else
-                        return ListView.builder(
-                          itemBuilder: (context, index) {
-                            return Bubble(
-                              style: snapshot.data[index].user_id == 5 ? styleMe : styleSomebody,
-                              child: Text("${snapshot.data[index].text}"),
-                            );
-                          },
-                          itemCount: snapshot.data.length,
-                        );
+                      return CircularProgressIndicator();
                     }
-
-                  } ,
+                  },
                 ),
               ),
               Divider(height: 1.0),
@@ -92,6 +136,12 @@ class _ChattingPageState extends State<ChattingPage> {
                           setState(() {
                             _isComposing = text.length > 0;
                           });
+                        },
+                        onTap: () {
+                          Timer(
+                              Duration(milliseconds: 300),
+                              () => _scrollController.jumpTo(
+                                  0.0));
                         },
                         onSubmitted: _handleSubmitted,
                         decoration: InputDecoration(
@@ -122,10 +172,11 @@ class _ChattingPageState extends State<ChattingPage> {
     );
   }
 
-  Future<List<Message>> makePostRequest() async {
+  Future<List<Message>> makeFetchRequest() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
-    List<Message> listmessage = await _httpService.fetchMessages("https://stormy-savannah-90253.herokuapp.com/api/chatroom/2", token);
+    List<Message> listmessage = await _httpService.fetchMessages(
+        "https://stormy-savannah-90253.herokuapp.com/api/chatroom/2", token);
     return listmessage;
   }
 }
