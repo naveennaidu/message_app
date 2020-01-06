@@ -1,5 +1,6 @@
 import 'package:avatar_letter/avatar_letter.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:message_app/models/chat_model.dart';
 import 'package:message_app/pages/chatting_page.dart';
 import 'package:message_app/utils/http_service.dart';
@@ -59,7 +60,7 @@ class _MessageListState extends State<MessageList> {
                                 width: 16.0,
                               ),
                               Text(
-                                snapshot.data[index].datetime,
+                                "${DateFormat('kk:mm:a').format(DateTime.parse(snapshot.data[index].datetime))}",
                                 style: TextStyle(fontSize: 12.0),
                               ),
                             ],
@@ -84,7 +85,7 @@ class _MessageListState extends State<MessageList> {
               ),
             );
           } else {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
