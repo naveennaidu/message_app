@@ -1,32 +1,46 @@
+import 'dart:async';
+
 import 'package:avatar_letter/avatar_letter.dart';
 import 'package:flutter/material.dart';
 import 'package:message_app/pages/signup_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileWidget extends StatefulWidget {
-  const ProfileWidget({Key key}) : super(key: key);
-
+class ProfileWidget extends StatelessWidget {
   @override
-  ProfileFormState createState() {
-    return ProfileFormState();
+  Widget build(BuildContext context) {
+    return ProfileForm();
   }
+
 }
 
-// TODO: Is there a reason you made this class not private as the other States?
-class ProfileFormState extends State<ProfileWidget> {
-  var username;
+class ProfileForm extends StatefulWidget {
+  @override
+  _ProfileFormState createState() => _ProfileFormState();
+}
 
-  Future<String> getName() async {
+// Is there a reason you made this class not private as the other States?
+class _ProfileFormState extends State<ProfileForm> {
+  var username;
+  StreamController<String> _events;
+
+  @override
+  void initState() {
+    super.initState();
+    _events = StreamController<String>();
+    getUsername();
+  }
+
+  Future getUsername() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     username = prefs.getString("username");
-    return Future.value(username);
+    _events.add(username);
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Use a StreamBuilder here.
-    return FutureBuilder<String>(
-      future: getName(),
+    // Use a StreamBuilder here.
+    return StreamBuilder<String>(
+      stream: _events.stream,
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if( snapshot.connectionState == ConnectionState.waiting){
           return  Center(child: Text('Please wait its loading...'));

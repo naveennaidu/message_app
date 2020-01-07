@@ -4,7 +4,7 @@ import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:message_app/models/message.dart';
-import 'package:message_app/utils/http_service.dart';
+import 'package:message_app/utils/http_messages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChattingPage extends StatefulWidget {
@@ -19,12 +19,12 @@ class ChattingPage extends StatefulWidget {
 
 class _ChattingPageState extends State<ChattingPage> {
   final TextEditingController _textController = new TextEditingController();
-  HttpService _httpService = new HttpService();
+  HttpMessages _httpMessages;
   bool _isComposing = false;
   String token;
   ScrollController _scrollController = new ScrollController();
   Timer timer;
-  Future<List<Message>> messages;
+  StreamController<List<Message>> messages;
 
   BubbleStyle styleMe = BubbleStyle(
     nip: BubbleNip.rightTop,
@@ -40,35 +40,15 @@ class _ChattingPageState extends State<ChattingPage> {
     alignment: Alignment.topLeft,
   );
 
-  // TODO: Move private methods to the bottom of the class.
-  // Also implement a repository class that stores all messages, and accesses
-  // the API from a separate class. No need to bother accessing the API from
-  // the widget directly.
-  // Also use const to specify the URLs used
-  void _handleSubmitted(String text) {
-    _httpService.post(
-        "https://stormy-savannah-90253.herokuapp.com/api/message/2?body=$text",
-        token);
-    _textController.clear();
-    setState(() {
-      _isComposing = false;
-      messages = makeFetchRequest();
-    });
-    Timer(
-        Duration(milliseconds: 500),
-        // TODO: What do you do here?
-        () => _scrollController
-            .jumpTo(0.0));
-  }
 
   @override
   void initState() {
     super.initState();
-    messages = makeFetchRequest();
+    _httpMessages = HttpMessages(widget.endpoint);
+    messages = StreamController<List<Message>>();
+    _makeFetchRequest();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-      setState(() {
-        messages = makeFetchRequest();
-      });
+        _makeFetchRequest();
     });
   }
 
@@ -90,11 +70,11 @@ class _ChattingPageState extends State<ChattingPage> {
           child: Column(
             children: <Widget>[
               Flexible(
-                // TODO: Use a StreamBuilder here. Then you also don't need
+                // Use a StreamBuilder here. Then you also don't need
                 // to store the value in its own variable, but can just read the
                 // value from the streamed event
-                child: FutureBuilder<List<Message>>(
-                  future: messages,
+                child: StreamBuilder<List<Message>>(
+                  stream: messages.stream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Message>> snapshot) {
                     if (snapshot.hasData) {
@@ -102,7 +82,7 @@ class _ChattingPageState extends State<ChattingPage> {
                       return ListView.builder(
                         itemBuilder: (context, index) {
                           return Bubble(
-                            style: reversedList[index].user_id == 5
+                            style: reversedList[index].betongs_to_current_user == 1
                                 ? styleMe
                                 : styleSomebody,
                             child: RichText(
@@ -146,13 +126,6 @@ class _ChattingPageState extends State<ChattingPage> {
                             _isComposing = text.length > 0;
                           });
                         },
-                        onTap: () {
-                          Timer(
-                              Duration(milliseconds: 300),
-                              // TODO: What do you do here?
-                              () => _scrollController.jumpTo(
-                                  0.0));
-                        },
                         onSubmitted: _handleSubmitted,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -182,13 +155,27 @@ class _ChattingPageState extends State<ChattingPage> {
     );
   }
 
-  // TODO: In this case, this method should be private.
+  // In this case, this method should be private.
   // Also, store the URL in a const
-  Future<List<Message>> makeFetchRequest() async {
+  _makeFetchRequest() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
-    List<Message> listmessage = await _httpService.fetchMessages(
-        "https://stormy-savannah-90253.herokuapp.com/api/chatroom/2", token);
-    return listmessage;
+    List<Message> listmessage = await _httpMessages.fetchMessages(token);
+    messages.add(listmessage);
+  }
+
+
+  // Move private methods to the bottom of the class.
+  // Also implement a repository class that stores all messages, and accesses
+  // the API from a separate class. No need to bother accessing the API from
+  // the widget directly.
+  // Also use const to specify the URLs used
+  void _handleSubmitted(String text) {
+    _httpMessages.postMessages(text, token);
+    _textController.clear();
+    _makeFetchRequest();
+    setState(() {
+      _isComposing = false;
+    });
   }
 }

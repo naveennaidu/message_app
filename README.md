@@ -1,16 +1,14 @@
 # message_app
 
-A new Flutter project.
+## API Specs
 
-## Getting Started
+Main URL = `https://stormy-savannah-90253.herokuapp.com/api/`
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Endpoint  | Method | Parameters | Response |
+| ------------- | ------------- | ------------- | ------------- |
+| `/auth/register/`  | `POST`  | `name` & `password`  | status= 201 {"message": {"message": "User created successfully"},"access_token": ""} <br /> status= 500 {"name": ["has already been taken"]}|
+| `/auth/login/`  | `POST`  | `name` & `password`  | status= 200 {"access_token": "","message": "Login Successful"}|
+| `/connect`  | `GET`  | header > `access_token`  | `message` & `endpoint` & `partnerusername` |
+| `/chatrooms`  | `GET`  | header > `access_token`  | {"chatrooms": "[{\"chatroom_id\":2,\"username\":\"User 1\",\"lastmessage\":{\"id\":49,\"body\":"",\"created_at\":"",\"updated_at\":"",\"chatroom_id\":2,\"user_id\":1}}]"} |
+| `/chatroom/endpoint`  | `GET`  | header > `access_token`  | `text` & `user_id` & `timestamp` |
+| `/chatroom/endpoint`  | `POST`  | header > `access_token` & `text`  | --- |

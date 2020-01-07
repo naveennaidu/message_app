@@ -1,17 +1,15 @@
 class Message {
-  final int id;
   final String text;
-  final int user_id;
   final String created_at;
+  final int betongs_to_current_user;
 
-  Message({this.id, this.text, this.user_id, this.created_at});
+  Message({this.text, this.created_at, this.betongs_to_current_user});
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-        id: json['id'],
-        text: json['body'],
-        user_id: json['user_id'],
-        created_at: json['created_at']
+        text: json['message'],
+        created_at: json['created_at'],
+        betongs_to_current_user: json["sender"]
     );
   }
 }

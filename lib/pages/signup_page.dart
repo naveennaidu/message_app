@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:message_app/utils/http_service.dart';
+import 'package:message_app/utils/auth_login.dart';
+import 'package:message_app/utils/auth_signup.dart';
 import 'package:message_app/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,7 +16,6 @@ class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  HttpService _httpService = new HttpService();
 
   @override
   Widget build(BuildContext context) {
@@ -75,27 +75,9 @@ class _SignupPageState extends State<SignupPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: RaisedButton(
                           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                          // TODO: Can you put the code in it's own method and call that method here?
+                          // Can you put the code in it's own method and call that method here?
                           onPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              var result =
-                                  await _httpService.authenticateSignup(
-                                      _usernameController.text,
-                                      _passwordController.text);
-                              if (result) {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs?.setString(
-                                    "username", _usernameController.text);
-                                prefs?.setString(
-                                    "password", _passwordController.text);
-                                Navigator.pushReplacementNamed(
-                                    context, HomePage.routeName);
-                              } else {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Text("please try again")));
-                              }
-                            }
+                            await onPressedSignUp(context);
                           },
                           child: Text(
                             "Sign Up",
@@ -106,26 +88,9 @@ class _SignupPageState extends State<SignupPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: RaisedButton(
                           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                          // TODO: Can you put the code in it's own method and call that method here?
+                          // Can you put the code in it's own method and call that method here?
                           onPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              var result = await _httpService.authenticateLogin(
-                                  _usernameController.text,
-                                  _passwordController.text);
-                              if (result) {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs?.setString(
-                                    "username", _usernameController.text);
-                                prefs?.setString(
-                                    "password", _passwordController.text);
-                                Navigator.pushReplacementNamed(
-                                    context, HomePage.routeName);
-                              } else {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Text("please try again")));
-                              }
-                            }
+                            await onPressedLogin(context);
                           },
                           child: Text(
                             "Log In",
@@ -137,5 +102,50 @@ class _SignupPageState extends State<SignupPage> {
             ),
           );
         }));
+  }
+
+  Future onPressedLogin(BuildContext context) async {
+    if (_formKey.currentState.validate()) {
+      AuthLogin _authLogin = AuthLogin();
+      var result = await _authLogin.authenticateLogin(
+          _usernameController.text,
+          _passwordController.text);
+      if (result) {
+        SharedPreferences prefs =
+            await SharedPreferences.getInstance();
+        prefs?.setString(
+            "username", _usernameController.text);
+        prefs?.setString(
+            "password", _passwordController.text);
+        Navigator.pushReplacementNamed(
+            context, HomePage.routeName);
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text("please try again")));
+      }
+    }
+  }
+
+  Future onPressedSignUp(BuildContext context) async {
+    if (_formKey.currentState.validate()) {
+      AuthSignup _authSignup = AuthSignup();
+      var result =
+          await _authSignup.authenticateSignup(
+              _usernameController.text,
+              _passwordController.text);
+      if (result) {
+        SharedPreferences prefs =
+            await SharedPreferences.getInstance();
+        prefs?.setString(
+            "username", _usernameController.text);
+        prefs?.setString(
+            "password", _passwordController.text);
+        Navigator.pushReplacementNamed(
+            context, HomePage.routeName);
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text("please try again")));
+      }
+    }
   }
 }

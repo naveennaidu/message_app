@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:avatar_letter/avatar_letter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:message_app/models/chat_model.dart';
+import 'package:message_app/models/chat_room.dart';
 import 'package:message_app/pages/chatting_page.dart';
-import 'package:message_app/utils/http_service.dart';
+import 'package:message_app/utils/http_chatrooms.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListWidget extends StatelessWidget {
@@ -19,16 +21,31 @@ class MessageList extends StatefulWidget {
 }
 
 class _MessageListState extends State<MessageList> {
-  HttpService _httpService = new HttpService();
+  HttpChatrooms _httpChatrooms = new HttpChatrooms();
+  StreamController<List<ChatRoom>> _events;
+
+  @override
+  void initState() {
+    super.initState();
+    _events = StreamController<List<ChatRoom>>();
+    fetchChatList();
+  }
+
+  fetchChatList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token");
+    List<ChatRoom> listchat = await _httpChatrooms.fetchChats(token);
+    _events.add(listchat);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: Use a StreamBuilder here
-      body: FutureBuilder<List<ChatModel>>(
-        future: fetchChatList(),
+      // Use a StreamBuilder here
+      body: StreamBuilder<List<ChatRoom>>(
+        stream: _events.stream,
         builder:
-            (BuildContext context, AsyncSnapshot<List<ChatModel>> snapshot) {
+            (BuildContext context, AsyncSnapshot<List<ChatRoom>> snapshot) {
           if (snapshot.hasData) {
             return Container(
               child: ListView.builder(
@@ -50,23 +67,23 @@ class _MessageListState extends State<MessageList> {
                             upperCase: true,
                             numberLetters: 1,
                             letterType: LetterType.Circular,
-                            text: snapshot.data[index].name,
+                            text: snapshot.data[index].partnerName,
                             backgroundColorHex: null,
                             textColorHex: null,
                           ),
                           title: Row(
                             children: <Widget>[
-                              Text(snapshot.data[index].name),
+                              Text(snapshot.data[index].partnerName),
                               SizedBox(
                                 width: 16.0,
                               ),
                               Text(
-                                "${DateFormat('kk:mm:a').format(DateTime.parse(snapshot.data[index].datetime))}",
+                                "${DateFormat('kk:mm:a').format(snapshot.data[index].lastTime)}",
                                 style: TextStyle(fontSize: 12.0),
                               ),
                             ],
                           ),
-                          subtitle: Text(snapshot.data[index].message),
+                          subtitle: Text(snapshot.data[index].lastMessage),
                           trailing: Icon(
                             Icons.arrow_forward_ios,
                             size: 14.0,
@@ -93,11 +110,5 @@ class _MessageListState extends State<MessageList> {
     );
   }
 
-  Future<List<ChatModel>> fetchChatList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
-    List<ChatModel> listchat = await _httpService.fetchChats(
-        "https://stormy-savannah-90253.herokuapp.com/api/chatroom/", token);
-    return listchat;
-  }
+
 }
