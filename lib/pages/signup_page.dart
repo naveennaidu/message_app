@@ -19,6 +19,9 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: If you declare the fields as variables, it would look a
+    // little better if you also move the initialization to its own method.
+    // Not a mistake, but makes the code a little more readable
     final emailField = Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 10.0),
       child: TextFormField(
@@ -72,6 +75,7 @@ class _SignupPageState extends State<SignupPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: RaisedButton(
                           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          // TODO: Can you put the code in it's own method and call that method here?
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               var result =
@@ -102,6 +106,7 @@ class _SignupPageState extends State<SignupPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: RaisedButton(
                           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          // TODO: Can you put the code in it's own method and call that method here?
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               var result = await _httpService.authenticateLogin(

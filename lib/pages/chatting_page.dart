@@ -40,6 +40,11 @@ class _ChattingPageState extends State<ChattingPage> {
     alignment: Alignment.topLeft,
   );
 
+  // TODO: Move private methods to the bottom of the class.
+  // Also implement a repository class that stores all messages, and accesses
+  // the API from a separate class. No need to bother accessing the API from
+  // the widget directly.
+  // Also use const to specify the URLs used
   void _handleSubmitted(String text) {
     _httpService.post(
         "https://stormy-savannah-90253.herokuapp.com/api/message/2?body=$text",
@@ -51,6 +56,7 @@ class _ChattingPageState extends State<ChattingPage> {
     });
     Timer(
         Duration(milliseconds: 500),
+        // TODO: What do you do here?
         () => _scrollController
             .jumpTo(0.0));
   }
@@ -84,6 +90,9 @@ class _ChattingPageState extends State<ChattingPage> {
           child: Column(
             children: <Widget>[
               Flexible(
+                // TODO: Use a StreamBuilder here. Then you also don't need
+                // to store the value in its own variable, but can just read the
+                // value from the streamed event
                 child: FutureBuilder<List<Message>>(
                   future: messages,
                   builder: (BuildContext context,
@@ -140,6 +149,7 @@ class _ChattingPageState extends State<ChattingPage> {
                         onTap: () {
                           Timer(
                               Duration(milliseconds: 300),
+                              // TODO: What do you do here?
                               () => _scrollController.jumpTo(
                                   0.0));
                         },
@@ -172,6 +182,8 @@ class _ChattingPageState extends State<ChattingPage> {
     );
   }
 
+  // TODO: In this case, this method should be private.
+  // Also, store the URL in a const
   Future<List<Message>> makeFetchRequest() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");

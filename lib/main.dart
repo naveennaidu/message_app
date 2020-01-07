@@ -17,6 +17,9 @@ class MyApp extends StatelessWidget {
         HomePage.routeName : (context) => HomePage(),
         ChattingPage.routeName : (context) => ChattingPage(),
         SignupPage.routeName : (context) => SignupPage(),
+        // TODO: You should not use a dedicated splash page.
+        // Use your main() method to for app specific setup, and just display a
+        // loading screen as supposed by Android or iOS
         SplashPage.routeName : (context) => SplashPage(),
       },
       theme: ThemeData(

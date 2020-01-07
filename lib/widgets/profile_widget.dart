@@ -12,6 +12,7 @@ class ProfileWidget extends StatefulWidget {
   }
 }
 
+// TODO: Is there a reason you made this class not private as the other States?
 class ProfileFormState extends State<ProfileWidget> {
   var username;
 
@@ -23,6 +24,7 @@ class ProfileFormState extends State<ProfileWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Use a StreamBuilder here.
     return FutureBuilder<String>(
       future: getName(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {

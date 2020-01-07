@@ -50,6 +50,13 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void navigateUser() async {
+    // TODO: You should basically do this in the main() method of
+    // your app, or at least in the first route you call.
+    // Also, don't store username and password, but the token you receive
+    // from the API instead (or additionally. Storing username and password to
+    // allow automatic renewal might be okay)
+    // Also, when storing the token, there is no necessity to perform a new authentication
+    // on every startup, as long as the token did not expire
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var username = prefs.getString("username");
     var password = prefs.getString("password");

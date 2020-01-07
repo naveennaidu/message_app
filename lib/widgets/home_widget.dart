@@ -4,6 +4,7 @@ import 'package:message_app/utils/http_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeWidget extends StatelessWidget {
+  // TODO: This variable is not used!
   HttpService _httpService = new HttpService();
   @override
   Widget build(BuildContext context) {

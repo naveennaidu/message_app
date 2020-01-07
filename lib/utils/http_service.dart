@@ -8,6 +8,13 @@ import 'package:message_app/models/message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HttpService {
+  // TODO: URLs should be stored in consts.
+  // A best practice would be to store the domain in its own const, and the paths
+  // to access the different resources in their own, and then to add them together.
+  // Also, the HttpService should not be responsible to differentiate between the
+  // resources, but merely be used to access the API itself.
+  // Include additional classes for the different resources (usually called repository,
+  // but here we also need something like 'Authenticator'), and use the HttpService there
   Future<bool> authenticateSignup(String username, String password) async {
     String url =
         "https://stormy-savannah-90253.herokuapp.com/api/auth/register/?name=$username&password=$password";

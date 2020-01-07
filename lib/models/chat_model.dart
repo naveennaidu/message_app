@@ -1,3 +1,6 @@
+// TODO: I don't understand the usage of this model. Can you explain?
+// To me, it seems to be the same as message. Why do you have both?
+// You problem should change the name of this class
 class ChatModel {
   final String name;
   final String datetime;

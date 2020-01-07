@@ -24,6 +24,7 @@ class _MessageListState extends State<MessageList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // TODO: Use a StreamBuilder here
       body: FutureBuilder<List<ChatModel>>(
         future: fetchChatList(),
         builder:
