@@ -84,7 +84,7 @@ class _ProfileFormState extends State<ProfileForm> {
                       onPressed: () async {
                         SharedPreferences prefs = await SharedPreferences.getInstance();
                         prefs?.clear();
-                        Navigator.pushReplacementNamed(context, SignupPage.routeName);
+                        Navigator.pushNamedAndRemoveUntil(context, SignupPage.routeName, (Route<dynamic> route) => false);
                       },
                       child: Text('LOG OUT', style: TextStyle(fontWeight: FontWeight.bold)),
                       color: Colors.red,

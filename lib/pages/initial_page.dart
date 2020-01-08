@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:message_app/pages/signup_page.dart';
 import 'package:message_app/utils/auth_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,6 +50,7 @@ class _InitialPageState extends State<InitialPage> {
     // allow automatic renewal might be okay)
     // Also, when storing the token, there is no necessity to perform a new authentication
     // on every startup, as long as the token did not expire
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var username = prefs.getString("username");
     var password = prefs.getString("password");

@@ -96,7 +96,7 @@ class _MessageListState extends State<MessageList> {
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  new ChattingPage(endpoint: "${snapshot.data[index].endpoint}")));
+                                  new ChattingPage(endpoint: "${snapshot.data[index].endpoint}", partnerName: "${snapshot.data[index].partnerName}",)));
                     },
                   );
                 },

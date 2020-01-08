@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:avatar_letter/avatar_letter.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,8 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ChattingPage extends StatefulWidget {
   static const String routeName = 'chatting';
   final String endpoint;
+  final String partnerName;
 
-  const ChattingPage({Key key, this.endpoint}) : super(key: key);
+  const ChattingPage({Key key, this.endpoint, this.partnerName}) : super(key: key);
 
   @override
   _ChattingPageState createState() => _ChattingPageState();
@@ -60,10 +62,27 @@ class _ChattingPageState extends State<ChattingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = 'Chatting';
+    final title = widget.partnerName;
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Row(
+          children: <Widget>[
+            AvatarLetter(
+              size: 40,
+              backgroundColor: Colors.white,
+              textColor: Colors.black,
+              fontSize: 20,
+              upperCase: true,
+              numberLetters: 1,
+              letterType: LetterType.Circular,
+              text: title,
+              backgroundColorHex: null,
+              textColorHex: null,
+            ),
+            SizedBox(width: 10,),
+            Text(title),
+          ],
+        ),
       ),
       body: Container(
           color: Colors.yellow.withAlpha(64),
@@ -82,7 +101,7 @@ class _ChattingPageState extends State<ChattingPage> {
                       return ListView.builder(
                         itemBuilder: (context, index) {
                           return Bubble(
-                            style: reversedList[index].betongs_to_current_user == 1
+                            style: reversedList[index].belongsToCurrentUser == 1
                                 ? styleMe
                                 : styleSomebody,
                             child: RichText(
@@ -94,7 +113,7 @@ class _ChattingPageState extends State<ChattingPage> {
                                         text: "${reversedList[index].text}"),
                                     TextSpan(
                                       text:
-                                          "${" " + DateFormat('kk:mm:a').format(DateTime.parse(reversedList[index].created_at))}",
+                                          "${" " + DateFormat('kk:mm:a').format(DateTime.parse(reversedList[index].createdAt))}",
                                       style: TextStyle(
                                           fontSize: 10, color: Colors.black),
                                     ),

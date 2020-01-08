@@ -10,7 +10,7 @@ class NetworkUtil {
 
   Future<http.Response> get({Map<String, String> headers}) {
     return http.get(url, headers: headers).then((http.Response response) {
-      return handleResponse(response);
+      return response;
     });
   }
 
@@ -18,19 +18,8 @@ class NetworkUtil {
     return http
         .post(url, body: body, headers: headers, encoding: encoding)
         .then((http.Response response) {
-      return handleResponse(response);
+      return response;
     });
   }
 
-  http.Response handleResponse(http.Response response) {
-    final int statusCode = response.statusCode;
-
-    if (statusCode == 401) {
-      throw new Exception("Unauthorized");
-    } else if (statusCode != 200) {
-      throw new Exception("Error while fetching data");
-    }
-
-    return response;
-  }
 }

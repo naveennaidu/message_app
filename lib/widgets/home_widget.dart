@@ -35,7 +35,7 @@ class HomeWidget extends StatelessWidget {
                   context,
                   new MaterialPageRoute(
                       builder: (BuildContext context) =>
-                          new ChattingPage(endpoint: endpoint)));
+                          new ChattingPage(endpoint: endpoint, partnerName: "User 1",)));
             },
           ),
         ),
