@@ -13,7 +13,8 @@ class ChattingPage extends StatefulWidget {
   final String endpoint;
   final String partnerName;
 
-  const ChattingPage({Key key, this.endpoint, this.partnerName}) : super(key: key);
+  const ChattingPage({Key key, this.endpoint, this.partnerName})
+      : super(key: key);
 
   @override
   _ChattingPageState createState() => _ChattingPageState();
@@ -42,7 +43,6 @@ class _ChattingPageState extends State<ChattingPage> {
     alignment: Alignment.topLeft,
   );
 
-
   @override
   void initState() {
     super.initState();
@@ -50,7 +50,7 @@ class _ChattingPageState extends State<ChattingPage> {
     messages = StreamController<List<Message>>();
     _makeFetchRequest();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-        _makeFetchRequest();
+      _makeFetchRequest();
     });
   }
 
@@ -65,6 +65,11 @@ class _ChattingPageState extends State<ChattingPage> {
     final title = widget.partnerName;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context, true);
+            }),
         title: Row(
           children: <Widget>[
             AvatarLetter(
@@ -79,7 +84,9 @@ class _ChattingPageState extends State<ChattingPage> {
               backgroundColorHex: null,
               textColorHex: null,
             ),
-            SizedBox(width: 10,),
+            SizedBox(
+              width: 10,
+            ),
             Text(title),
           ],
         ),
@@ -182,7 +189,6 @@ class _ChattingPageState extends State<ChattingPage> {
     List<Message> listmessage = await _httpMessages.fetchMessages(token);
     messages.add(listmessage);
   }
-
 
   // Move private methods to the bottom of the class.
   // Also implement a repository class that stores all messages, and accesses

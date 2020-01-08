@@ -92,11 +92,14 @@ class _MessageListState extends State<MessageList> {
                       ],
                     ),
                     onTap: () async {
-                      Navigator.push(
+                      var nav = await Navigator.push(
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   new ChattingPage(endpoint: "${snapshot.data[index].endpoint}", partnerName: "${snapshot.data[index].partnerName}",)));
+                      if(nav==true || nav==null){
+                        fetchChatList();
+                      }
                     },
                   );
                 },
