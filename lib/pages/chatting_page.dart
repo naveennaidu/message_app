@@ -4,8 +4,10 @@ import 'package:avatar_letter/avatar_letter.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:message_app/common/showDialogSingleButton.dart';
 import 'package:message_app/models/message.dart';
 import 'package:message_app/utils/http_messages.dart';
+import 'package:message_app/utils/internet_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChattingPage extends StatefulWidget {
@@ -27,6 +29,8 @@ class _ChattingPageState extends State<ChattingPage> {
   ScrollController _scrollController = new ScrollController();
   Timer timer;
   StreamController<List<Message>> messages;
+  InternetCheck _internetCheck = InternetCheck();
+  bool isConnected;
 
   BubbleStyle styleMe = BubbleStyle(
     nip: BubbleNip.rightTop,
@@ -178,8 +182,15 @@ class _ChattingPageState extends State<ChattingPage> {
   // In this case, this method should be private.
   // Also, store the URL in a const
   void _makeFetchRequest() async {
-    List<Message> listmessage = await _httpMessages.fetchMessages();
-    messages.add(listmessage);
+    isConnected = await _internetCheck.check();
+    if (isConnected) {
+      List<Message> listmessage = await _httpMessages.fetchMessages();
+      messages.add(listmessage);
+    } else {
+      showDialogSingleButton(context, "Please check your internet connection", "This app needs internet connection to work", "OK");
+      timer.cancel();
+    }
+
   }
 
   // Move private methods to the bottom of the class.
@@ -188,11 +199,17 @@ class _ChattingPageState extends State<ChattingPage> {
   // the widget directly.
   // Also use const to specify the URLs used
   void _handleSubmitted(String text) {
-    _httpMessages.postMessages(text);
-    _textController.clear();
-    _makeFetchRequest();
-    setState(() {
-      _isComposing = false;
-    });
+    if (isConnected) {
+      _httpMessages.postMessages(text);
+      _textController.clear();
+      _makeFetchRequest();
+      setState(() {
+        _isComposing = false;
+      });
+    } else {
+      showDialogSingleButton(context, "Please check your internet connection", "This app needs internet connection to work", "OK");
+      timer.cancel();
+    }
+
   }
 }

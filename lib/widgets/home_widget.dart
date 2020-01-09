@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/common/showDialogSingleButton.dart';
 import 'package:message_app/utils/http_connect.dart';
+import 'package:message_app/utils/internet_check.dart';
 import 'package:message_app/widgets/loading_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +13,7 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
 
   HttpConnect _httpConnect = HttpConnect();
+  InternetCheck _internetCheck = InternetCheck();
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +37,18 @@ class _HomeWidgetState extends State<HomeWidget> {
               ),
             ),
             onPressed: () async {
-
-              var connectStatus = await _httpConnect.postConnection();
-              if (connectStatus == 200) {
-                Navigator.pushNamed(context, LoadingWidget.routeName);
-              } else {
-                showDialogSingleButton(context, "please try again", "not able to connect to server", "OK");
+              bool isConnected = await _internetCheck.check();
+              if (isConnected) {
+                var connectStatus = await _httpConnect.postConnection();
+                if (connectStatus == 200) {
+                  Navigator.pushNamed(context, LoadingWidget.routeName);
+                } else {
+                  showDialogSingleButton(context, "please try again", "not able to connect to server", "OK");
+                }
+              }else {
+                showDialogSingleButton(context, "Please check your internet connection", "This app needs internet connection to work", "OK");
               }
+
             },
           ),
         ),

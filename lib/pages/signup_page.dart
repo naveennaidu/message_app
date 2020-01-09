@@ -4,6 +4,7 @@ import 'package:message_app/common/showDialogSingleButton.dart';
 import 'package:message_app/utils/auth_login.dart';
 import 'package:message_app/utils/auth_signup.dart';
 import 'package:message_app/pages/home_page.dart';
+import 'package:message_app/utils/internet_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  InternetCheck _internetCheck = InternetCheck();
 
   @override
   Widget build(BuildContext context) {
@@ -77,20 +79,32 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future _onPressedLogin(BuildContext context) async {
+    bool isConnected = await _internetCheck.check();
     if (_formKey.currentState.validate()) {
-      AuthLogin _authLogin = AuthLogin();
-      var result = await _authLogin.authenticateLogin(
-          _usernameController.text, _passwordController.text);
-      await _pushToHomePage(result, context);
+      if (isConnected) {
+        AuthLogin _authLogin = AuthLogin();
+        var result = await _authLogin.authenticateLogin(
+            _usernameController.text, _passwordController.text);
+        await _pushToHomePage(result, context);
+      } else {
+        showDialogSingleButton(context, "Please check your internet connection", "This app needs internet connection to work", "OK");
+      }
+
     }
   }
 
   Future _onPressedSignUp(BuildContext context) async {
+    bool isConnected = await _internetCheck.check();
     if (_formKey.currentState.validate()) {
-      AuthSignup _authSignup = AuthSignup();
-      var result = await _authSignup.authenticateSignup(
-          _usernameController.text, _passwordController.text);
-      await _pushToHomePage(result, context);
+      if (isConnected) {
+        AuthSignup _authSignup = AuthSignup();
+        var result = await _authSignup.authenticateSignup(
+            _usernameController.text, _passwordController.text);
+        await _pushToHomePage(result, context);
+      } else {
+        showDialogSingleButton(context, "Please check your internet connection", "This app needs internet connection to work", "OK");
+      }
+
     }
   }
 
