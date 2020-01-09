@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:message_app/pages/initial_page.dart';
 import 'package:message_app/pages/signup_page.dart';
+import 'package:message_app/widgets/loading_widget.dart';
 
 import 'pages/home_page.dart';
 import 'pages/chatting_page.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         // Use your main() method to for app specific setup, and just display a
         // loading screen as supposed by Android or iOS
         InitialPage.routeName : (context) => InitialPage(),
+        LoadingWidget.routeName : (context) => LoadingWidget(),
       },
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,

@@ -48,7 +48,7 @@ class _SignupPageState extends State<SignupPage> {
                           // Can you put the code in it's own method and call that method here?
                           onPressed: () async {
                             SystemChannels.textInput.invokeMethod('TextInput.hide');
-                            await onPressedSignUp(context);
+                            await _onPressedSignUp(context);
                           },
                           child: Text(
                             "Sign Up",
@@ -62,7 +62,7 @@ class _SignupPageState extends State<SignupPage> {
                           // Can you put the code in it's own method and call that method here?
                           onPressed: () async {
                             SystemChannels.textInput.invokeMethod('TextInput.hide');
-                            await onPressedLogin(context);
+                            await _onPressedLogin(context);
                           },
                           child: Text(
                             "Log In",
@@ -76,35 +76,32 @@ class _SignupPageState extends State<SignupPage> {
         }));
   }
 
-  Future onPressedLogin(BuildContext context) async {
+  Future _onPressedLogin(BuildContext context) async {
     if (_formKey.currentState.validate()) {
       AuthLogin _authLogin = AuthLogin();
       var result = await _authLogin.authenticateLogin(
           _usernameController.text, _passwordController.text);
-      if (result) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs?.setString("username", _usernameController.text);
-        prefs?.setString("password", _passwordController.text);
-        Navigator.pushReplacementNamed(context, HomePage.routeName);
-      } else {
-        showDialogSingleButton(context, "Unable to Login", "You may have supplied an invalid 'Username' / 'Password' combination", "OK");
-      }
+      await _pushToHomePage(result, context);
     }
   }
 
-  Future onPressedSignUp(BuildContext context) async {
+  Future _onPressedSignUp(BuildContext context) async {
     if (_formKey.currentState.validate()) {
       AuthSignup _authSignup = AuthSignup();
       var result = await _authSignup.authenticateSignup(
           _usernameController.text, _passwordController.text);
-      if (result) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs?.setString("username", _usernameController.text);
-        prefs?.setString("password", _passwordController.text);
-        Navigator.pushReplacementNamed(context, HomePage.routeName);
-      } else {
-        showDialogSingleButton(context, "Unable to SignUp", "Username already taken, please try again with new username", "OK");
-      }
+      await _pushToHomePage(result, context);
+    }
+  }
+
+  Future _pushToHomePage(bool result, BuildContext context) async {
+    if (result) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs?.setString("username", _usernameController.text);
+      prefs?.setString("password", _passwordController.text);
+      Navigator.pushReplacementNamed(context, HomePage.routeName);
+    } else {
+      showDialogSingleButton(context, "Unable to Login", "You may have supplied an invalid 'Username' / 'Password' combination", "OK");
     }
   }
 }

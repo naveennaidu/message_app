@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:message_app/models/chat_room.dart';
 import 'package:message_app/pages/chatting_page.dart';
 import 'package:message_app/utils/http_chatrooms.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ListWidget extends StatelessWidget {
   @override
@@ -21,22 +20,17 @@ class MessageList extends StatefulWidget {
 }
 
 class _MessageListState extends State<MessageList> {
-  HttpChatrooms _httpChatrooms = new HttpChatrooms();
+  HttpChatrooms _httpChatrooms = HttpChatrooms();
   StreamController<List<ChatRoom>> _events;
 
   @override
   void initState() {
     super.initState();
     _events = StreamController<List<ChatRoom>>();
-    fetchChatList();
+    _fetchChatList();
   }
 
-  fetchChatList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
-    List<ChatRoom> listchat = await _httpChatrooms.fetchChats(token);
-    _events.add(listchat);
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +71,12 @@ class _MessageListState extends State<MessageList> {
                               SizedBox(
                                 width: 16.0,
                               ),
-                              Text(
-                                "${DateFormat('kk:mm:a').format(snapshot.data[index].lastTime)}",
-                                style: TextStyle(fontSize: 12.0),
-                              ),
+                              snapshot.data[index].lastTime != null
+                                  ? Text(
+                                      "${DateFormat('kk:mm:a').format(snapshot.data[index].lastTime)}",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  : Container(),
                             ],
                           ),
                           subtitle: Text(snapshot.data[index].lastMessage),
@@ -92,14 +88,17 @@ class _MessageListState extends State<MessageList> {
                       ],
                     ),
                     onTap: () async {
-                      var nav = await Navigator.push(
+                      await Navigator.push(
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  new ChattingPage(endpoint: "${snapshot.data[index].endpoint}", partnerName: "${snapshot.data[index].partnerName}",)));
-                      if(nav==true || nav==null){
-                        fetchChatList();
-                      }
+                                  new ChattingPage(
+                                    endpoint:
+                                        "${snapshot.data[index].endpoint}",
+                                    partnerName:
+                                        "${snapshot.data[index].partnerName}",
+                                  )));
+                      _fetchChatList();
                     },
                   );
                 },
@@ -113,5 +112,8 @@ class _MessageListState extends State<MessageList> {
     );
   }
 
-
+  _fetchChatList() async {
+    List<ChatRoom> listchat = await _httpChatrooms.fetchChats();
+    _events.add(listchat);
+  }
 }

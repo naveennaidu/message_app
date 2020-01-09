@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:message_app/pages/chatting_page.dart';
+import 'package:message_app/common/showDialogSingleButton.dart';
+import 'package:message_app/utils/http_connect.dart';
+import 'package:message_app/widgets/loading_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeWidget extends StatelessWidget {
-  // This variable is not used!
+class HomeWidget extends StatefulWidget {
+  @override
+  _HomeWidgetState createState() => _HomeWidgetState();
+}
+
+class _HomeWidgetState extends State<HomeWidget> {
+
+  HttpConnect _httpConnect = HttpConnect();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -26,20 +35,18 @@ class HomeWidget extends StatelessWidget {
               ),
             ),
             onPressed: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              String token = prefs.getString("token");
 
-              String endpoint = "2"; //await _httpService.post("", token);
-
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          new ChattingPage(endpoint: endpoint, partnerName: "User 1",)));
+              var connectStatus = await _httpConnect.postConnection();
+              if (connectStatus == 200) {
+                Navigator.pushNamed(context, LoadingWidget.routeName);
+              } else {
+                showDialogSingleButton(context, "please try again", "not able to connect to server", "OK");
+              }
             },
           ),
         ),
       ],
     );
   }
+
 }

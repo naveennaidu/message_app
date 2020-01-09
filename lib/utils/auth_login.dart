@@ -7,18 +7,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 const String loginPath = "/api/auth/login";
 
 class AuthLogin {
-
   NetworkUtil _networkUtil = NetworkUtil(loginPath);
 
-  Future<bool> authenticateLogin(String username, String password) {
-    return _networkUtil.post(body: {
+  Future<bool> authenticateLogin(String username, String password) async {
+    dynamic response = await _networkUtil.post(body: {
       "name": username,
       "password": password,
-    }).then((dynamic response) async {
-      String token = json.decode(response.body)["access_token"];
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs?.setString("token", token);
-      return response.statusCode == HttpStatus.ok;
     });
+
+    String token = json.decode(response.body)["access_token"];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs?.setString("token", token);
+    return response.statusCode == HttpStatus.ok;
   }
 }

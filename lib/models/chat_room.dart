@@ -10,11 +10,21 @@ class ChatRoom {
   ChatRoom({this.partnerName, this.lastTime, this.lastMessage, this.endpoint});
 
   factory ChatRoom.fromJson(Map<String, dynamic> json) {
-    return ChatRoom(
-        partnerName: json['username'],
-        lastTime: DateTime.parse(json['lastmessage']["created_at"]),
-        lastMessage: json['lastmessage']["body"],
-        endpoint: json['chatroom_id']
-    );
+    if (json['lastmessage'] != null) {
+      return ChatRoom(
+          partnerName: json['username'],
+          lastTime: DateTime.parse(json['lastmessage']["created_at"]),
+          lastMessage: json['lastmessage']["body"],
+          endpoint: json['chatroom_id']
+      );
+    } else {
+      return ChatRoom(
+          partnerName: json['username'],
+          lastTime: null,
+          lastMessage: "",
+          endpoint: json['chatroom_id']
+      );
+    }
+
   }
 }

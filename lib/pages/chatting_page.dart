@@ -24,7 +24,6 @@ class _ChattingPageState extends State<ChattingPage> {
   final TextEditingController _textController = new TextEditingController();
   HttpMessages _httpMessages;
   bool _isComposing = false;
-  String token;
   ScrollController _scrollController = new ScrollController();
   Timer timer;
   StreamController<List<Message>> messages;
@@ -36,7 +35,7 @@ class _ChattingPageState extends State<ChattingPage> {
     alignment: Alignment.topRight,
   );
 
-  BubbleStyle styleSomebody = BubbleStyle(
+  BubbleStyle styleOther  = BubbleStyle(
     nip: BubbleNip.leftTop,
     color: Colors.white,
     margin: BubbleEdges.only(top: 8.0, right: 50.0),
@@ -65,11 +64,6 @@ class _ChattingPageState extends State<ChattingPage> {
     final title = widget.partnerName;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            icon: new Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context, true);
-            }),
         title: Row(
           children: <Widget>[
             AvatarLetter(
@@ -108,9 +102,9 @@ class _ChattingPageState extends State<ChattingPage> {
                       return ListView.builder(
                         itemBuilder: (context, index) {
                           return Bubble(
-                            style: reversedList[index].belongsToCurrentUser == 1
+                            style: reversedList[index].belongsToCurrentUser
                                 ? styleMe
-                                : styleSomebody,
+                                : styleOther,
                             child: RichText(
                               text: TextSpan(
                                   style: TextStyle(
@@ -183,10 +177,8 @@ class _ChattingPageState extends State<ChattingPage> {
 
   // In this case, this method should be private.
   // Also, store the URL in a const
-  _makeFetchRequest() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    List<Message> listmessage = await _httpMessages.fetchMessages(token);
+  void _makeFetchRequest() async {
+    List<Message> listmessage = await _httpMessages.fetchMessages();
     messages.add(listmessage);
   }
 
@@ -196,7 +188,7 @@ class _ChattingPageState extends State<ChattingPage> {
   // the widget directly.
   // Also use const to specify the URLs used
   void _handleSubmitted(String text) {
-    _httpMessages.postMessages(text, token);
+    _httpMessages.postMessages(text);
     _textController.clear();
     _makeFetchRequest();
     setState(() {

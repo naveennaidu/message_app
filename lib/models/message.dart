@@ -1,7 +1,7 @@
 class Message {
   final String text;
   final String createdAt;
-  final int belongsToCurrentUser;
+  final bool belongsToCurrentUser;
 
   Message({this.text, this.createdAt, this.belongsToCurrentUser});
 
@@ -9,7 +9,7 @@ class Message {
     return Message(
         text: json['message'],
         createdAt: json['created_at'],
-        belongsToCurrentUser: json["sender"]
+        belongsToCurrentUser: json["sender"] == 1 ? true : false
     );
   }
 }
