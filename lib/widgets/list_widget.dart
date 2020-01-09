@@ -42,11 +42,13 @@ class _MessageListState extends State<MessageList> {
         builder:
             (BuildContext context, AsyncSnapshot<List<ChatRoom>> snapshot) {
           if (snapshot.hasData) {
+            var orderedList = snapshot.data;
+            orderedList.sort((a, b) => b.lastTime.toString().compareTo(a.lastTime.toString()));
+            orderedList.removeWhere((item) => item.lastTime == null);
             return Container(
               child: ListView.builder(
-                itemCount: snapshot.data.length,
+                itemCount: orderedList.length,
                 itemBuilder: (context, index) {
-//                  ChatModel _model = ChatModel.dummyData[index];
                   return GestureDetector(
                     child: Column(
                       children: <Widget>[
@@ -62,25 +64,25 @@ class _MessageListState extends State<MessageList> {
                             upperCase: true,
                             numberLetters: 1,
                             letterType: LetterType.Circular,
-                            text: snapshot.data[index].partnerName,
+                            text: orderedList[index].partnerName,
                             backgroundColorHex: null,
                             textColorHex: null,
                           ),
                           title: Row(
                             children: <Widget>[
-                              Text(snapshot.data[index].partnerName),
+                              Text(orderedList[index].partnerName),
                               SizedBox(
                                 width: 16.0,
                               ),
-                              snapshot.data[index].lastTime != null
+                              orderedList[index].lastTime != null
                                   ? Text(
-                                      "${DateFormat('kk:mm:a').format(snapshot.data[index].lastTime)}",
+                                      "${DateFormat('kk:mm:a').format(orderedList[index].lastTime)}",
                                       style: TextStyle(fontSize: 12.0),
                                     )
                                   : Container(),
                             ],
                           ),
-                          subtitle: Text(snapshot.data[index].lastMessage),
+                          subtitle: Text(orderedList[index].lastMessage),
                           trailing: Icon(
                             Icons.arrow_forward_ios,
                             size: 14.0,
@@ -94,10 +96,9 @@ class _MessageListState extends State<MessageList> {
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   new ChattingPage(
-                                    endpoint:
-                                        "${snapshot.data[index].endpoint}",
+                                    endpoint: "${orderedList[index].endpoint}",
                                     partnerName:
-                                        "${snapshot.data[index].partnerName}",
+                                        "${orderedList[index].partnerName}",
                                   )));
                       _fetchChatList();
                     },
@@ -119,7 +120,8 @@ class _MessageListState extends State<MessageList> {
       List<ChatRoom> listchat = await _httpChatrooms.fetchChats();
       _events.add(listchat);
     } else {
-      showDialogSingleButton(context, "Please check your internet connection", "This app needs internet connection to work", "OK");
+      showDialogSingleButton(context, "Please check your internet connection",
+          "This app needs internet connection to work", "OK");
     }
   }
 }
