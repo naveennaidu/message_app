@@ -41,7 +41,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
               width: 100,
               child: CircularProgressIndicator(),
             ),
-            Text("Please wait, trying to connect to other user"),
+            Text("Please wait, trying to connect"),
             SizedBox(
               height: 60,
             ),

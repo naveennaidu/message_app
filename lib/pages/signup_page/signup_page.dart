@@ -48,6 +48,7 @@ class _SignupPageState extends State<SignupPage> {
                     RaisedButton(
                       padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       onPressed: () async {
+                        _onLoading();
                         await _onPressedSignUp(context);
                       },
                       child: Text(
@@ -57,6 +58,7 @@ class _SignupPageState extends State<SignupPage> {
                     RaisedButton(
                       padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       onPressed: () async {
+                        _onLoading();
                         await _onPressedLogin(context);
                       },
                       child: Text(
@@ -104,11 +106,35 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
+  void _onLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            height: 100,
+            width: 100,
+            color: Color.fromRGBO(135,206,235, 0.5),
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                new CircularProgressIndicator(),
+                new Text("Loading"),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future _goToHomePage(bool result, BuildContext context) async {
     if (result) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs?.setString("username", _usernameController.text);
       prefs?.setString("password", _passwordController.text);
+      Navigator.pop(context);
       Navigator.pushReplacementNamed(context, HomePage.routeName);
     } else {
       showDialogSingleButton(
