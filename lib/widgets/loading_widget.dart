@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:message_app/pages/chatting_page.dart';
-import 'package:message_app/utils/http_connect.dart';
+import 'package:message_app/pages/chatting_page/chatting_page.dart';
+import 'package:message_app/utils/api/http_connect.dart';
 
 class LoadingWidget extends StatefulWidget {
   static const String routeName = 'loading';
@@ -65,12 +65,14 @@ class _LoadingWidgetState extends State<LoadingWidget> {
     if (json["chatroom"] != null && json["user"] != null) {
       timer.cancel();
       Navigator.pushReplacement(
-          context,
-          new MaterialPageRoute(
-              builder: (BuildContext context) => new ChattingPage(
-                    endpoint: json["chatroom"],
-                    partnerName: json["user"],
-                  )));
+        context,
+        new MaterialPageRoute(
+          builder: (BuildContext context) => new ChattingPage(
+            endpoint: json["chatroom"],
+            partnerName: json["user"],
+          ),
+        ),
+      );
     }
   }
 }

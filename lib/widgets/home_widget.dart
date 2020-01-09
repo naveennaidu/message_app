@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/common/showDialogSingleButton.dart';
-import 'package:message_app/utils/http_connect.dart';
+import 'package:message_app/utils/api/http_connect.dart';
 import 'package:message_app/utils/internet_check.dart';
 import 'package:message_app/widgets/loading_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeWidget extends StatefulWidget {
   @override

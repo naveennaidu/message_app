@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:avatar_letter/avatar_letter.dart';
 import 'package:flutter/material.dart';
-import 'package:message_app/pages/signup_page.dart';
+import 'package:message_app/pages/signup_page/signup_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileWidget extends StatelessWidget {
@@ -10,7 +9,6 @@ class ProfileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProfileForm();
   }
-
 }
 
 class ProfileForm extends StatefulWidget {
@@ -18,7 +16,6 @@ class ProfileForm extends StatefulWidget {
   _ProfileFormState createState() => _ProfileFormState();
 }
 
-// Is there a reason you made this class not private as the other States?
 class _ProfileFormState extends State<ProfileForm> {
   var username;
   StreamController<String> _events;
@@ -38,66 +35,51 @@ class _ProfileFormState extends State<ProfileForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Use a StreamBuilder here.
     return StreamBuilder<String>(
-      stream: _events.stream,
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        if( snapshot.connectionState == ConnectionState.waiting){
-          return  Center(child: Text('Please wait its loading...'));
-        }else{
-          if (snapshot.hasError)
-            return Center(child: Text('Error: ${snapshot.error}'));
-          else
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                  child: Center(
-                    child: AvatarLetter(
-                      size: 80,
-                      backgroundColor: Colors.lightBlue,
-                      textColor: Colors.white,
-                      fontSize: 40,
-                      upperCase: true,
-                      numberLetters: 1,
-                      letterType: LetterType.Circular,
-                      text: snapshot.data,
-                      backgroundColorHex: null,
-                      textColorHex: null,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(
+        stream: _events.stream,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: Text('Please wait its loading...'));
+          } else {
+            if (snapshot.hasError)
+              return Center(child: Text('Error: ${snapshot.error}'));
+            else
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 30),
+                  CircleAvatar(
+                    backgroundColor: Colors.lightBlue,
+                    radius: 60,
                     child: Text(
-                      snapshot.data.toUpperCase(),
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      "${snapshot.data[0].toUpperCase()}",
+                      style: TextStyle(color: Colors.white, fontSize: 50),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 200.0),
-                  child: Center(
-                    child: RaisedButton(
-                      onPressed: () async {
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        prefs?.clear();
-                        Navigator.pushNamedAndRemoveUntil(context, SignupPage.routeName, (Route<dynamic> route) => false);
-                      },
-                      child: Text('LOG OUT', style: TextStyle(fontWeight: FontWeight.bold)),
-                      color: Colors.red,
-                      textColor: Colors.white,
-                    ),
+                  SizedBox(height: 16),
+                  Text(
+                    snapshot.data.toUpperCase(),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
-              ],
-            );
-        }
-      }
-
-
-    );
+                  SizedBox(height: 200),
+                  RaisedButton(
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs?.clear();
+                      Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          SignupPage.routeName,
+                          (Route<dynamic> route) => false);
+                    },
+                    child: Text('LOG OUT',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    color: Colors.red,
+                    textColor: Colors.white,
+                  ),
+                ],
+              );
+          }
+        });
   }
 }

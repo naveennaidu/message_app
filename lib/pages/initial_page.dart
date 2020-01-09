@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:message_app/pages/signup_page.dart';
-import 'package:message_app/utils/auth_login.dart';
+import 'package:message_app/pages/signup_page/signup_page.dart';
+import 'package:message_app/utils/api/auth_login.dart';
 import 'package:message_app/utils/internet_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,7 +37,6 @@ class _InitialPageState extends State<InitialPage> {
               "Messages App",
               style: TextStyle(fontSize: 30),
             ),
-
           ],
         ),
       ),
@@ -72,25 +71,24 @@ class _InitialPageState extends State<InitialPage> {
       }
     } else {
       showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Please check your internet connection"),
-            content: Text("This app needs internet connection to work"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("OK"),
-                onPressed: (){
-                  Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, SignupPage.routeName);
-                },
-              ),
-            ],
-          );
-        }
-      );
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Please check your internet connection"),
+              content: Text("This app needs internet connection to work"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(
+                        context, SignupPage.routeName);
+                  },
+                ),
+              ],
+            );
+          });
     }
-
   }
 }
