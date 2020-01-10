@@ -4,19 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:message_app/pages/signup_page/signup_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileWidget extends StatelessWidget {
+
+class ProfileWidget extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return ProfileForm();
-  }
+  _ProfileWidgetState createState() => _ProfileWidgetState();
 }
 
-class ProfileForm extends StatefulWidget {
-  @override
-  _ProfileFormState createState() => _ProfileFormState();
-}
-
-class _ProfileFormState extends State<ProfileForm> {
+class _ProfileWidgetState extends State<ProfileWidget> {
   var username;
   StreamController<String> _events;
 

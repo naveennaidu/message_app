@@ -8,22 +8,30 @@ import 'package:message_app/models/message.dart';
 class MessagesViewWidget extends StatelessWidget {
   const MessagesViewWidget({
     Key key,
-    @required this.messages,
-    @required this.styleMe,
-    @required this.styleOther,
-    @required ScrollController scrollController,
-  }) : _scrollController = scrollController, super(key: key);
+    @required this.messagesStream,
+  }) : super(key: key);
 
-  final StreamController<List<Message>> messages;
-  final BubbleStyle styleMe;
-  final BubbleStyle styleOther;
-  final ScrollController _scrollController;
+  final StreamController<List<Message>> messagesStream;
 
   @override
   Widget build(BuildContext context) {
+    BubbleStyle styleMe = BubbleStyle(
+      nip: BubbleNip.rightTop,
+      color: Color.fromARGB(255, 225, 255, 199),
+      margin: BubbleEdges.only(top: 8.0, left: 50.0),
+      alignment: Alignment.topRight,
+    );
+
+    BubbleStyle styleOther = BubbleStyle(
+      nip: BubbleNip.leftTop,
+      color: Colors.white,
+      margin: BubbleEdges.only(top: 8.0, right: 50.0),
+      alignment: Alignment.topLeft,
+    );
+
     return Flexible(
       child: StreamBuilder<List<Message>>(
-        stream: messages.stream,
+        stream: messagesStream.stream,
         builder: (BuildContext context,
             AsyncSnapshot<List<Message>> snapshot) {
           if (snapshot.hasData) {
@@ -51,7 +59,6 @@ class MessagesViewWidget extends StatelessWidget {
                 );
               },
               itemCount: snapshot.data.length,
-              controller: _scrollController,
               reverse: true,
             );
           } else {

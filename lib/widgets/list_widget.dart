@@ -2,28 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:message_app/common/showDialogSingleButton.dart';
 import 'package:message_app/models/chat_room.dart';
 import 'package:message_app/pages/chatting_page/chatting_page.dart';
 import 'package:message_app/utils/api/http_chatrooms.dart';
-import 'package:message_app/utils/internet_check.dart';
 
-class ListWidget extends StatelessWidget {
+class ListWidget extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MessageList();
-  }
+  _ListWidgetState createState() => _ListWidgetState();
 }
 
-class MessageList extends StatefulWidget {
-  @override
-  _MessageListState createState() => _MessageListState();
-}
-
-class _MessageListState extends State<MessageList> {
+class _ListWidgetState extends State<ListWidget> {
   HttpChatrooms _httpChatrooms = HttpChatrooms();
   StreamController<List<ChatRoom>> _events;
-  InternetCheck _internetCheck = InternetCheck();
 
   @override
   void initState() {
@@ -107,13 +97,7 @@ class _MessageListState extends State<MessageList> {
   }
 
   _fetchChatList() async {
-    bool isConnected = await _internetCheck.check();
-    if (isConnected) {
-      List<ChatRoom> listchat = await _httpChatrooms.fetchChats();
-      _events.add(listchat);
-    } else {
-      showDialogSingleButton(context, "Please check your internet connection",
-          "This app needs internet connection to work", "OK");
-    }
+    List<ChatRoom> chatList = await _httpChatrooms.fetchChats();
+    _events.add(chatList);
   }
 }

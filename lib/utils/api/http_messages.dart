@@ -4,7 +4,7 @@ import 'package:message_app/models/message.dart';
 import 'package:message_app/utils/network_util.dart';
 import 'package:message_app/utils/tokenizer.dart';
 
-const String messagesPath = "/api/chatroom/";
+const String messagesPath = "/api/chatrooms/";
 
 class HttpMessages {
   final String endpoint;

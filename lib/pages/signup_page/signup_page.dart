@@ -1,12 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:message_app/common/showDialogSingleButton.dart';
 import 'package:message_app/pages/signup_page/password_field.dart';
 import 'package:message_app/pages/signup_page/username_field.dart';
 import 'package:message_app/utils/api/auth_login.dart';
 import 'package:message_app/utils/api/auth_signup.dart';
 import 'package:message_app/pages/home_page.dart';
-import 'package:message_app/utils/internet_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
@@ -21,7 +20,6 @@ class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  InternetCheck _internetCheck = InternetCheck();
 
   @override
   Widget build(BuildContext context) {
@@ -32,77 +30,77 @@ class _SignupPageState extends State<SignupPage> {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Builder(
-        builder: (BuildContext context) {
-          return Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            UsernameField(usernameController: _usernameController),
+            PasswordField(passwordController: _passwordController),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                UsernameField(usernameController: _usernameController),
-                PasswordField(passwordController: _passwordController),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    RaisedButton(
-                      padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                      onPressed: () async {
-                        _onLoading();
-                        await _onPressedSignUp(context);
-                      },
-                      child: Text(
-                        "Sign Up",
-                      ),
-                    ),
-                    RaisedButton(
-                      padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                      onPressed: () async {
-                        _onLoading();
-                        await _onPressedLogin(context);
-                      },
-                      child: Text(
-                        "Log In",
-                      ),
-                    ),
-                  ],
+                RaisedButton(
+                  padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  onPressed: () async {
+                    _onLoading();
+                    await _onPressedSignUp(context);
+                  },
+                  child: Text(
+                    "Sign Up",
+                  ),
                 ),
-                SizedBox(height: 200),
+                RaisedButton(
+                  padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  onPressed: () async {
+                    _onLoading();
+                    await _onPressedLogin(context);
+                  },
+                  child: Text(
+                    "Log In",
+                  ),
+                ),
               ],
             ),
-          );
-        },
+            SizedBox(height: 100),
+          ],
+        ),
       ),
     );
   }
 
   Future _onPressedLogin(BuildContext context) async {
-    bool isConnected = await _internetCheck.check();
     if (_formKey.currentState.validate()) {
-      if (isConnected) {
-        AuthLogin _authLogin = AuthLogin();
-        var result = await _authLogin.authenticateLogin(
-            _usernameController.text, _passwordController.text);
-        await _goToHomePage(result, context);
-      } else {
-        showDialogSingleButton(context, "Please check your internet connection",
-            "This app needs internet connection to work", "OK");
+      AuthLogin _authLogin = AuthLogin();
+      var result = await _authLogin.authenticateLogin(
+          _usernameController.text, _passwordController.text);
+      if (result == HttpStatus.ok) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs?.setString("username", _usernameController.text);
+        prefs?.setString("password", _passwordController.text);
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, HomePage.routeName);
+      } else if (result == HttpStatus.forbidden) {
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Wrong username or password, please try again with correct details"),));
       }
     }
   }
 
   Future _onPressedSignUp(BuildContext context) async {
-    bool isConnected = await _internetCheck.check();
     if (_formKey.currentState.validate()) {
-      if (isConnected) {
         AuthSignup _authSignup = AuthSignup();
         var result = await _authSignup.authenticateSignup(
             _usernameController.text, _passwordController.text);
-        await _goToHomePage(result, context);
-      } else {
-        showDialogSingleButton(context, "Please check your internet connection",
-            "This app needs internet connection to work", "OK");
-      }
+        if (result == HttpStatus.created) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs?.setString("username", _usernameController.text);
+          prefs?.setString("password", _passwordController.text);
+          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, HomePage.routeName);
+        } else if (result == HttpStatus.unprocessableEntity) {
+          Scaffold.of(context).showSnackBar(SnackBar(content: Text("username already in use, please try with different username"),));
+        }
     }
   }
 
@@ -115,7 +113,7 @@ class _SignupPageState extends State<SignupPage> {
           child: Container(
             height: 100,
             width: 100,
-            color: Color.fromRGBO(135,206,235, 0.5),
+            color: Color.fromRGBO(135, 206, 235, 0.5),
             child: new Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -129,19 +127,4 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Future _goToHomePage(bool result, BuildContext context) async {
-    if (result) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs?.setString("username", _usernameController.text);
-      prefs?.setString("password", _passwordController.text);
-      Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, HomePage.routeName);
-    } else {
-      showDialogSingleButton(
-          context,
-          "Unable to Login",
-          "You may have supplied an invalid 'Username' / 'Password' combination",
-          "OK");
-    }
-  }
 }

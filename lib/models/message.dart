@@ -9,7 +9,7 @@ class Message {
     return Message(
         text: json['message'],
         createdAt: json['created_at'],
-        belongsToCurrentUser: json["sender"] == 1 ? true : false
+        belongsToCurrentUser: json["sender"] == 1
     );
   }
 }

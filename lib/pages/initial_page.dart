@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:message_app/pages/signup_page/signup_page.dart';
 import 'package:message_app/utils/api/auth_login.dart';
-import 'package:message_app/utils/internet_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home_page.dart';
@@ -16,8 +17,7 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> {
-  bool result = false;
-  InternetCheck _internetCheck = InternetCheck();
+  int result = HttpStatus.accepted;
 
   @override
   void initState() {
@@ -56,39 +56,15 @@ class _InitialPageState extends State<InitialPage> {
     var username = prefs.getString("username");
     var password = prefs.getString("password");
 
-    bool isConnected = await _internetCheck.check();
+    if (username != null && password != null) {
+      AuthLogin _authLogin = new AuthLogin();
+      result = await _authLogin.authenticateLogin(username, password);
+    }
 
-    if (isConnected) {
-      if (username != null && password != null) {
-        AuthLogin _authLogin = new AuthLogin();
-        result = await _authLogin.authenticateLogin(username, password);
-      }
-
-      if (result) {
-        Navigator.pushReplacementNamed(context, HomePage.routeName);
-      } else {
-        Navigator.pushReplacementNamed(context, SignupPage.routeName);
-      }
+    if (result == HttpStatus.ok) {
+      Navigator.pushReplacementNamed(context, HomePage.routeName);
     } else {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Please check your internet connection"),
-              content: Text("This app needs internet connection to work"),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("OK"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pushReplacementNamed(
-                        context, SignupPage.routeName);
-                  },
-                ),
-              ],
-            );
-          });
+      Navigator.pushReplacementNamed(context, SignupPage.routeName);
     }
   }
 }

@@ -13,7 +13,7 @@ class HttpConnect {
     String token = await _tokenizer.getToken();
     dynamic response =
         await _networkUtil.get(headers: {"Authorization": token});
-    return json.decode(response.body);
+    return json.decode(json.decode(response.body)["connection"]);
   }
 
   Future<dynamic> postConnection() async {

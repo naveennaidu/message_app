@@ -10,16 +10,16 @@ class ChatRoom {
     if (json['lastmessage'] != null) {
       return ChatRoom(
           partnerName: json['username'],
-          lastTime: DateTime.parse(json['lastmessage']["created_at"]),
-          lastMessage: json['lastmessage']["body"],
-          endpoint: json['chatroom_id']
+          lastTime: DateTime.parse(json['last_message']["created_at"]),
+          lastMessage: json['last_message']["body"],
+          endpoint: json['id']
       );
     } else {
       return ChatRoom(
           partnerName: json['username'],
           lastTime: null,
           lastMessage: "",
-          endpoint: json['chatroom_id']
+          endpoint: json['id']
       );
     }
 
