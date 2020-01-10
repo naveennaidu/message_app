@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:message_app/models/message.dart';
 import 'package:message_app/pages/chatting_page/messages_view_widget.dart';
+import 'package:message_app/utils/api/http_connect.dart';
 import 'package:message_app/utils/api/http_messages.dart';
 
 class ChatViewWidget extends StatefulWidget {
@@ -17,6 +18,7 @@ class _ChatViewWidgetState extends State<ChatViewWidget> {
   final TextEditingController _textController = new TextEditingController();
   bool _isComposing = false;
   HttpMessages _httpMessages;
+  HttpConnect _httpConnect = HttpConnect();
   StreamController<List<Message>> messagesStream;
   Timer timer;
 
@@ -37,6 +39,7 @@ class _ChatViewWidgetState extends State<ChatViewWidget> {
     Future.delayed(Duration(seconds: 2), () {
       messagesStream.close();
     });
+    _httpConnect.cancelConnection();
     super.dispose();
   }
 

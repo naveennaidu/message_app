@@ -17,7 +17,7 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> {
-  int result = HttpStatus.accepted;
+  bool result = false;
 
   @override
   void initState() {
@@ -58,10 +58,15 @@ class _InitialPageState extends State<InitialPage> {
 
     if (username != null && password != null) {
       AuthLogin _authLogin = new AuthLogin();
-      result = await _authLogin.authenticateLogin(username, password);
+      try {
+        result = await _authLogin.authenticateLogin(username, password);
+      } on Exception catch (e) {
+        // TODO
+        print(e);
+      }
     }
 
-    if (result == HttpStatus.ok) {
+    if (result) {
       Navigator.pushReplacementNamed(context, HomePage.routeName);
     } else {
       Navigator.pushReplacementNamed(context, SignupPage.routeName);

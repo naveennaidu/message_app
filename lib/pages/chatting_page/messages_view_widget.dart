@@ -35,7 +35,7 @@ class MessagesViewWidget extends StatelessWidget {
         builder: (BuildContext context,
             AsyncSnapshot<List<Message>> snapshot) {
           if (snapshot.hasData) {
-            var reversedList = snapshot.data.reversed.toList();
+            var reversedList = snapshot.data;
             return ListView.builder(
               itemBuilder: (context, index) {
                 return Bubble(

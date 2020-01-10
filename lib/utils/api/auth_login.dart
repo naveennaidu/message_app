@@ -9,15 +9,26 @@ const String loginPath = "/api/auth/login";
 class AuthLogin {
   NetworkUtil _networkUtil = NetworkUtil(loginPath);
 
-  Future<int> authenticateLogin(String username, String password) async {
-    dynamic response = await _networkUtil.post(body: {
-      "name": username,
-      "password": password,
-    });
-
-    String token = json.decode(json.decode(response.body)["user"])["token"];
+  Future<bool> authenticateLogin(String username, String password) async {
+    var body = json.encode({"user":{"name":username,"password":password}});
+    dynamic response = handleResponse(await _networkUtil.post(body: body, headers: { "Content-Type": "application/json" }));
+    String token = json.decode(response.body)["user"]["access_token"];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs?.setString("token", token);
-    return response.statusCode;
+    return response.statusCode == HttpStatus.ok;
+  }
+
+  dynamic handleResponse(dynamic response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode == 403) {
+      throw Exception("wrong Authentication");
+    } else if (statusCode == 422) {
+      throw Exception("Insufficient data provided");
+    } else if (statusCode == 400) {
+      throw Exception("No data provided");
+    }
+
+    return response;
   }
 }

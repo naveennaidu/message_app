@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:message_app/common/showDialogSingleButton.dart';
 import 'package:message_app/pages/signup_page/password_field.dart';
 import 'package:message_app/pages/signup_page/username_field.dart';
 import 'package:message_app/utils/api/auth_login.dart';
@@ -44,7 +45,6 @@ class _SignupPageState extends State<SignupPage> {
                 RaisedButton(
                   padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                   onPressed: () async {
-                    _onLoading();
                     await _onPressedSignUp(context);
                   },
                   child: Text(
@@ -54,7 +54,6 @@ class _SignupPageState extends State<SignupPage> {
                 RaisedButton(
                   padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                   onPressed: () async {
-                    _onLoading();
                     await _onPressedLogin(context);
                   },
                   child: Text(
@@ -72,35 +71,44 @@ class _SignupPageState extends State<SignupPage> {
 
   Future _onPressedLogin(BuildContext context) async {
     if (_formKey.currentState.validate()) {
+      _onLoading();
       AuthLogin _authLogin = AuthLogin();
-      var result = await _authLogin.authenticateLogin(
-          _usernameController.text, _passwordController.text);
-      if (result == HttpStatus.ok) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs?.setString("username", _usernameController.text);
-        prefs?.setString("password", _passwordController.text);
+      try {
+        var result = await _authLogin.authenticateLogin(
+            _usernameController.text, _passwordController.text);
+
+        if (result) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs?.setString("username", _usernameController.text);
+          prefs?.setString("password", _passwordController.text);
+          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, HomePage.routeName);
+        }
+      } on Exception catch (e) {
         Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, HomePage.routeName);
-      } else if (result == HttpStatus.forbidden) {
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Wrong username or password, please try again with correct details"),));
+        showDialogSingleButton(context, "$e", "", "OK");
       }
     }
   }
 
   Future _onPressedSignUp(BuildContext context) async {
     if (_formKey.currentState.validate()) {
-        AuthSignup _authSignup = AuthSignup();
+      _onLoading();
+      AuthSignup _authSignup = AuthSignup();
+      try {
         var result = await _authSignup.authenticateSignup(
             _usernameController.text, _passwordController.text);
-        if (result == HttpStatus.created) {
+        if (result) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs?.setString("username", _usernameController.text);
           prefs?.setString("password", _passwordController.text);
           Navigator.pop(context);
           Navigator.pushReplacementNamed(context, HomePage.routeName);
-        } else if (result == HttpStatus.unprocessableEntity) {
-          Scaffold.of(context).showSnackBar(SnackBar(content: Text("username already in use, please try with different username"),));
         }
+      } on Exception catch (e) {
+        Navigator.pop(context);
+        showDialogSingleButton(context, "$e", "", "OK");
+      }
     }
   }
 
@@ -126,5 +134,4 @@ class _SignupPageState extends State<SignupPage> {
       },
     );
   }
-
 }

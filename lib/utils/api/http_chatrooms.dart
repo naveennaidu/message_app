@@ -14,7 +14,7 @@ class HttpChatrooms {
     String token = await _tokenizer.getToken();
     dynamic response =
         await _networkUtil.get(headers: {"Authorization": token});
-    return (json.decode(json.decode(response.body)["chatrooms"]))
+    return json.decode(response.body)["chatrooms"]
         .map<ChatRoom>((p) => ChatRoom.fromJson(p))
         .toList();
   }

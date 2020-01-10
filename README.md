@@ -32,7 +32,7 @@ Body:
   'user': {
     'id': '4711',
     'name': 'Testy McTestface',
-    'token': 'ABCD
+    'access_token': 'ABCD
   }
 }
 ```
@@ -54,7 +54,7 @@ Body:
 
 ##### Response
 
-Status: 422 Unprocessable Entity
+Status: 409 Unprocessable Entity
 
 Body:
 
@@ -141,7 +141,7 @@ Body:
   'user': {
     'id': '4711',
     'name': 'Testy McTestface',
-    'token': 'ABCD
+    'access_token': 'ABCD
   }
 }
 ```
@@ -496,18 +496,6 @@ Body:
       'sender': 'self',
       'created_at': '2019-11-11 11:15'
     },
-    {
-      'id': 123,
-      'body': 'Fine, and you?',
-      'sender': 'other',
-      'created_at': '2019-11-11 11:23'
-    },
-    {
-      'id': 555,
-      'body': 'Me too!',
-      'sender': 'self',
-      'created_at': '2019-11-11 11:11'
-    }
   ]
 }
 ```

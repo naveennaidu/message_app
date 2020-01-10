@@ -35,12 +35,13 @@ class _HomeWidgetState extends State<HomeWidget> {
               ),
             ),
             onPressed: () async {
-              var connectStatus = await _httpConnect.postConnection();
-              if (connectStatus == HttpStatus.ok) {
-                Navigator.pushNamed(context, LoadingWidget.routeName);
-              } else {
-                showDialogSingleButton(context, "please try again",
-                    "not able to connect to server", "OK");
+              try {
+                var connectStatus = await _httpConnect.postConnection();
+                if (connectStatus == HttpStatus.ok) {
+                  Navigator.pushNamed(context, LoadingWidget.routeName);
+                }
+              } on Exception catch (e) {
+                showDialogSingleButton(context, "$e", "", "OK");
               }
             },
           ),

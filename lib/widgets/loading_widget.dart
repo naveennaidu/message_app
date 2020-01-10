@@ -49,6 +49,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
               icon: Icon(Icons.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
+                _httpConnect.cancelConnection();
               },
               iconSize: 60,
               color: Colors.redAccent,
@@ -62,14 +63,15 @@ class _LoadingWidgetState extends State<LoadingWidget> {
   _getConnectionStatus() async {
     Map<String, dynamic> json = await _httpConnect.getConnection();
     print(json);
-    if (json["chatroom"] != null && json["other_name"] != null) {
+    if (json["chatroom"] != null && json["user"] != null) {
       timer.cancel();
+      print(json["user"]);
       Navigator.pushReplacement(
         context,
         new MaterialPageRoute(
           builder: (BuildContext context) => new ChattingPage(
             endpoint: json["chatroom"],
-            partnerName: json["other_name"],
+            partnerName: json["user"],
           ),
         ),
       );

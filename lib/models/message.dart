@@ -7,9 +7,9 @@ class Message {
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-        text: json['message'],
+        text: json['body'],
         createdAt: json['created_at'],
-        belongsToCurrentUser: json["sender"] == 1
+        belongsToCurrentUser: json["sender"] == "self"
     );
   }
 }
