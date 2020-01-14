@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:message_app/common/showDialogSingleButton.dart';
 import 'package:message_app/pages/signup_page/password_field.dart';

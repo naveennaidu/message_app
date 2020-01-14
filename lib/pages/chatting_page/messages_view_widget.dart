@@ -50,7 +50,7 @@ class MessagesViewWidget extends StatelessWidget {
                           TextSpan(text: "${reversedList[index].text}"),
                           TextSpan(
                             text:
-                            "${" " + DateFormat('kk:mm:a').format(DateTime.parse(reversedList[index].createdAt))}",
+                            "${" " + DateFormat('kk:mm:a').format(reversedList[index].createdAt)}",
                             style: TextStyle(
                                 fontSize: 10, color: Colors.black),
                           ),
