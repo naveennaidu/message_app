@@ -13,19 +13,19 @@ class LoadingWidget extends StatefulWidget {
 
 class _LoadingWidgetState extends State<LoadingWidget> {
   HttpConnect _httpConnect = HttpConnect();
-  Timer timer;
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+    _timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
       _getConnectionStatus();
     });
   }
 
   @override
   void dispose() {
-    timer.cancel();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -64,8 +64,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
     Map<String, dynamic> json = await _httpConnect.getConnection();
     print(json);
     if (json["chatroom"] != null && json["other_name"] != null) {
-      timer.cancel();
-      print(json["user"]);
+      _timer.cancel();
       Navigator.pushReplacement(
         context,
         new MaterialPageRoute(
