@@ -63,7 +63,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
   _getConnectionStatus() async {
     Map<String, dynamic> json = await _httpConnect.getConnection();
     print(json);
-    if (json["chatroom"] != null && json["user"] != null) {
+    if (json["chatroom"] != null && json["other_name"] != null) {
       timer.cancel();
       print(json["user"]);
       Navigator.pushReplacement(
@@ -71,7 +71,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
         new MaterialPageRoute(
           builder: (BuildContext context) => new ChattingPage(
             endpoint: json["chatroom"],
-            partnerName: json["user"],
+            partnerName: json["other_name"],
           ),
         ),
       );

@@ -54,7 +54,7 @@ Body:
 
 ##### Response
 
-Status: 409 Unprocessable Entity
+Status: 422 Unprocessable Entity
 
 Body:
 
@@ -375,7 +375,9 @@ Body:
 {
   'chatrooms': [
     'id': 815,
-    'username': 'Other',
+    "user": {
+        "name": "naveen"
+    },
     'last_message': {
       'id': 1234,
       'body': 'Hello',
@@ -430,7 +432,9 @@ Body:
 {
   'chatroom': {
     'id': 815,
-    'username': 'Other',
+    "other_user": {
+      "name": "naveennaidu"
+    },
     'messages': [
       4,
       45,
@@ -487,13 +491,17 @@ Body:
     {
       'id': 4,
       'body': 'Hello',
-      'sender': 'other',
+      "sent_by": {
+        "user": "self"
+      },
       'created_at': '2019-11-11 11:11'
     },
     {
       'id': 45,
       'body': 'How are you?',
-      'sender': 'self',
+      "sent_by": {
+        "user": "self"
+      },
       'created_at': '2019-11-11 11:15'
     },
   ]

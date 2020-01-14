@@ -10,8 +10,11 @@ class AuthSignup {
   NetworkUtil _networkUtil = NetworkUtil(signUpPath);
 
   Future<bool> authenticateSignup(String username, String password) async {
-    var body = json.encode({"user":{"name":username,"password":password}});
-    dynamic response = handleResponse(await _networkUtil.post(body: body, headers: { "Content-Type": "application/json" }));
+    var body = json.encode({
+      "user": {"name": username, "password": password}
+    });
+    dynamic response = handleResponse(await _networkUtil
+        .post(body: body, headers: {"Content-Type": "application/json"}));
     String token = json.decode(response.body)["user"]["access_token"];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs?.setString("token", token);
@@ -21,10 +24,8 @@ class AuthSignup {
   dynamic handleResponse(dynamic response) {
     final int statusCode = response.statusCode;
 
-    if (statusCode == 409) {
-      throw Exception("Username already in use");
-    } else if (statusCode == 422) {
-      throw Exception("Insufficient data provided");
+    if (statusCode == 422) {
+      throw Exception("Username already in use or Insufficient data provided");
     } else if (statusCode == 400) {
       throw Exception("No data provided");
     }
