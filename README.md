@@ -1,16 +1,646 @@
-# message_app
 
-A new Flutter project.
+# API reference
+Main URL = `https://stormy-savannah-90253.herokuapp.com/api/`
 
-## Getting Started
+## /auth/register
 
-This project is a starting point for a Flutter application.
+### POST
 
-A few resources to get you started if this is your first Flutter project:
+#### Succesful
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+##### Request
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Body:
+
+```
+{
+  'user': {
+    'name': 'Testy McTestface',
+    'password': 'Geheim!'
+  }
+}
+```
+
+##### Response
+
+Status: 201 Created
+
+Body:
+
+```
+{
+  'user': {
+    'id': '4711',
+    'name': 'Testy McTestface',
+    'access_token': 'ABCD
+  }
+}
+```
+
+#### Username already registered
+
+##### Request
+
+Body:
+
+```
+{
+  'user': {
+    'name': 'Testy McTestface',
+    'password': 'Geheim!'
+  }
+}
+```
+
+##### Response
+
+Status: 422 Unprocessable Entity
+
+Body:
+
+```
+{
+  'errors': {
+    'name': [
+      'already in use'
+    ]
+}
+```
+
+#### Insufficient data provided
+
+##### Request
+
+Body:
+
+```
+{
+  'user': {
+    'name': 'Testy McTestface',
+  }
+}
+```
+
+##### Response
+
+Status: 422 Unprocessable Entity
+
+Body:
+
+```
+{
+  'errors': {
+    'password': [
+      'must exist'
+    ]
+}
+```
+
+##### No data provided
+
+##### Request
+
+Body:
+
+```
+{
+}
+```
+
+##### Response
+
+Status: 400 Bad request
+
+## /auth/login
+
+### POST
+
+#### Succesful
+
+##### Request
+
+Body:
+
+```
+{
+  'user': {
+    'name': 'Testy McTestface',
+    'password': 'Geheim!'
+  }
+}
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'user': {
+    'id': '4711',
+    'name': 'Testy McTestface',
+    'access_token': 'ABCD
+  }
+}
+```
+
+#### Authentication wrong
+
+##### Request
+
+Body:
+
+```
+{
+  'user': {
+    'name': 'Testy McTestface',
+    'password': 'Geheim'
+  }
+}
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Insufficient data provided
+
+##### Request
+
+Body:
+
+```
+{
+  'user': {
+    'name': 'Testy McTestface',
+  }
+}
+```
+
+##### Response
+
+Status: 422 Unprocessable Entity
+
+Body:
+
+```
+{
+  'errors': {
+    'password': [
+      'must exist'
+    ]
+}
+```
+
+##### No data provided
+
+##### Request
+
+Body:
+
+```
+{
+}
+```
+
+##### Response
+
+Status: 400 Bad request
+
+## /connection
+
+### POST
+
+#### Succesful
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'connection': {
+    'status': 'pending'
+  }
+}
+```
+
+#### Authorization wrong
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABC
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Authorization not provided
+
+##### Response
+
+Status: 401 Unauthorized
+
+### GET
+
+#### Succesful
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'connection': {
+    'status': 'connected',
+    'chatroom': 815,
+    'other_name': 'naveen',
+  }
+}
+```
+
+#### Authorization wrong
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABC
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Authorization not provided
+
+##### Response
+
+Status: 401 Unauthorized
+
+### DELETE
+
+#### Succesful
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'connection': {
+    'status': 'waiting'
+  }
+}
+```
+
+#### Authorization wrong
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABC
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Authorization not provided
+
+##### Response
+
+Status: 401 Unauthorized
+
+## /chatrooms
+
+### GET
+
+#### Succesful
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'chatrooms': [
+    'id': 815,
+    "user": {
+        "name": "naveen"
+    },
+    'last_message': {
+      'id': 1234,
+      'body': 'Hello',
+      'sender': 'other',
+      'created_at': '2019-11-11 11:11'
+    }
+  ]
+}
+```
+
+#### Authorization wrong
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABC
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Authorization not provided
+
+##### Response
+
+Status: 401 Unauthorized
+
+## /chatrooms/$ID
+
+### GET
+
+#### Succesful
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'chatroom': {
+    'id': 815,
+    "other_user": {
+      "name": "naveennaidu"
+    },
+    'messages': [
+      4,
+      45,
+      123,
+      555
+    ]
+  }
+}
+```
+
+#### Authorization wrong
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABC
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Authorization not provided
+
+##### Response
+
+Status: 401 Unauthorized
+
+## /chatrooms/$ID/messages
+
+### GET
+
+#### Succesful
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'messages': [
+    {
+      'id': 4,
+      'body': 'Hello',
+      "sent_by": {
+        "user": "self"
+      },
+      'created_at': '2019-11-11 11:11'
+    },
+    {
+      'id': 45,
+      'body': 'How are you?',
+      "sent_by": {
+        "user": "self"
+      },
+      'created_at': '2019-11-11 11:15'
+    },
+  ]
+}
+```
+
+#### Authorization wrong
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABC
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Authorization not provided
+
+##### Response
+
+Status: 401 Unauthorized
+
+### POST
+
+#### Succesful
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+Body:
+
+```
+{
+  'message': {
+    'body': 'Hello'
+  }
+}
+```
+
+##### Response
+
+Status: 200 Ok
+
+Body:
+
+```
+{
+  'message': {
+    'id': 4,  
+    'body': 'Hello',
+    'sender': 'self',
+    'created_at': '2019-11-12 13:23'
+  }
+}
+```
+
+#### Insufficient data provided
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+
+Body:
+
+```
+{
+  'message': {
+  }
+}
+```
+
+##### Response
+
+Status: 422 Unprocessable Entity
+
+Body:
+
+```
+{
+  'errors': {
+    'body': [
+      'must exist'
+    ]
+}
+```
+
+##### No data provided
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABCD
+```
+
+
+Body:
+
+```
+{
+}
+```
+
+##### Response
+
+Status: 400 Bad request
+
+
+#### Authorization wrong
+
+##### Request
+
+Header:
+
+```
+Authorization: Bearer ABC
+```
+
+##### Response
+
+Status: 403 Forbidden
+
+#### Authorization not provided
+
+##### Response
+
+Status: 401 Unauthorized

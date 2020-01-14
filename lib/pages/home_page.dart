@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/widgets/home_widget.dart';
-import 'package:message_app/widgets/list_widget.dart';
+import 'package:message_app/widgets/chatroom_list_widget.dart';
 import 'package:message_app/widgets/profile_widget.dart';
+
+const List<String> title = ["Home", "Messages", "Profile"];
 
 class HomePage extends StatefulWidget {
   static const String routeName = 'home';
@@ -13,22 +15,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  // TODO: You should be able to use an enum to store the current page,
-  // and then also just access the title by the enum .toString() method.
-  // Makes things a little bit more readable
-  String _title = "Home";
+  String _title = title[0];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      switch(index) {
-        case 0: { _title = 'Home'; }
-        break;
-        case 1: { _title = 'Messages'; }
-        break;
-        case 2: { _title = 'Profile'; }
-        break;
-      }
+      _title = title[index];
     });
   }
 
@@ -36,14 +28,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_title),
+        title: Text(
+          _title,
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Center(
-        child: <Widget>[
-          HomeWidget(),
-          ListWidget(),
-          ProfileWidget()
-        ].elementAt(_selectedIndex),
+        child: <Widget>[HomeWidget(), ChatroomListWidget(), ProfileWidget()]
+            .elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

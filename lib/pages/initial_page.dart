@@ -1,27 +1,26 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:message_app/pages/signup_page.dart';
-import 'package:message_app/utils/http_service.dart';
+import 'package:flutter/services.dart';
+import 'package:message_app/pages/signup_page/signup_page.dart';
+import 'package:message_app/utils/api/auth_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home_page.dart';
 
-class SplashPage extends StatefulWidget {
-  static const String routeName = 'splash_page';
+class InitialPage extends StatefulWidget {
+  static const String routeName = 'initial_page';
   @override
   State<StatefulWidget> createState() {
-    return _SplashPageState();
+    return _InitialPageState();
   }
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _InitialPageState extends State<InitialPage> {
   bool result = false;
 
   @override
   void initState() {
     super.initState();
-    startTimer();
+    navigateUser();
   }
 
   @override
@@ -36,34 +35,33 @@ class _SplashPageState extends State<SplashPage> {
               "Messages App",
               style: TextStyle(fontSize: 30),
             ),
-
           ],
         ),
       ),
     );
   }
 
-  void startTimer() {
-    Timer(Duration(seconds: 2), () {
-      navigateUser();
-    });
-  }
-
   void navigateUser() async {
-    // TODO: You should basically do this in the main() method of
+    // You should basically do this in the main() method of
     // your app, or at least in the first route you call.
     // Also, don't store username and password, but the token you receive
-    // from the API instead (or additionally. Storing username and password to
+    // TODO: from the API instead (or additionally. Storing username and password to
     // allow automatic renewal might be okay)
     // Also, when storing the token, there is no necessity to perform a new authentication
     // on every startup, as long as the token did not expire
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var username = prefs.getString("username");
     var password = prefs.getString("password");
 
     if (username != null && password != null) {
-      HttpService _httpService = new HttpService();
-      result = await _httpService.authenticateLogin(username, password);
+      AuthLogin _authLogin = new AuthLogin();
+      try {
+        result = await _authLogin.authenticateLogin(username, password);
+      } on Exception catch (e) {
+        // TODO
+        print(e);
+      }
     }
 
     if (result) {
