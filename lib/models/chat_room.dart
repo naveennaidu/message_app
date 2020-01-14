@@ -9,16 +9,16 @@ class ChatRoom {
   factory ChatRoom.fromJson(Map<String, dynamic> json) {
     if (json['last_message'] != null) {
       return ChatRoom(
-          partnerName: json['user']['name'],
-          lastTime: DateTime.parse(json['last_message']["created_at"]).toLocal(),
-          lastMessage: json['last_message']["body"],
+          partnerName: json['other_user']['name'],
+          lastTime: DateTime.parse(json['last_message']['created_at']).toLocal(),
+          lastMessage: json['last_message']['body'],
           endpoint: json['id']
       );
     } else {
       return ChatRoom(
-          partnerName: json['user']['name'],
+          partnerName: json['other_user']['name'],
           lastTime: null,
-          lastMessage: "",
+          lastMessage: '',
           endpoint: json['id']
       );
     }

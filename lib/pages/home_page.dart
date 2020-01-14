@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/widgets/home_widget.dart';
-import 'package:message_app/widgets/list_widget.dart';
+import 'package:message_app/widgets/chatroom_list_widget.dart';
 import 'package:message_app/widgets/profile_widget.dart';
 
 const List<String> title = ["Home", "Messages", "Profile"];
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Center(
-        child: <Widget>[HomeWidget(), ListWidget(), ProfileWidget()]
+        child: <Widget>[HomeWidget(), ChatroomListWidget(), ProfileWidget()]
             .elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(

@@ -35,18 +35,22 @@ class _HomeWidgetState extends State<HomeWidget> {
               ),
             ),
             onPressed: () async {
-              try {
-                var connectStatus = await _httpConnect.postConnection();
-                if (connectStatus == HttpStatus.ok) {
-                  Navigator.pushNamed(context, LoadingWidget.routeName);
-                }
-              } on Exception catch (e) {
-                showDialogSingleButton(context, "$e", "", "OK");
-              }
+              await _connectBtnPressed(context);
             },
           ),
         ),
       ],
     );
+  }
+
+  Future _connectBtnPressed(BuildContext context) async {
+    try {
+      var connectStatus = await _httpConnect.postConnection();
+      if (connectStatus == HttpStatus.ok) {
+        Navigator.pushNamed(context, LoadingWidget.routeName);
+      }
+    } on Exception catch (e) {
+      showDialogSingleButton(context, "$e", "", "OK");
+    }
   }
 }

@@ -9,7 +9,7 @@ class Message {
     return Message(
         text: json['body'],
         createdAt: DateTime.parse(json['created_at']).toLocal(),
-        belongsToCurrentUser: json['sent_by']['user'] == "self"
+        belongsToCurrentUser: json['sent_by'] == 'self'
     );
   }
 }

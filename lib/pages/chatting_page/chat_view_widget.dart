@@ -15,29 +15,29 @@ class ChatViewWidget extends StatefulWidget {
 }
 
 class _ChatViewWidgetState extends State<ChatViewWidget> {
-  final TextEditingController _textController = new TextEditingController();
-  bool _isComposing = false;
   HttpMessages _httpMessages;
   HttpConnect _httpConnect = HttpConnect();
-  StreamController<List<Message>> messagesStream;
-  Timer timer;
+  bool _isComposing = false;
+  StreamController<List<Message>> _messagesStream;
+  final TextEditingController _textController = new TextEditingController();
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
     _httpMessages = HttpMessages(widget.endpoint);
-    messagesStream = StreamController<List<Message>>();
+    _messagesStream = StreamController<List<Message>>();
     _makeFetchRequest();
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       _makeFetchRequest();
     });
   }
 
   @override
   void dispose() {
-    timer.cancel();
+    _timer.cancel();
     Future.delayed(Duration(seconds: 2), () {
-      messagesStream.close();
+      _messagesStream.close();
     });
     _httpConnect.cancelConnection();
     super.dispose();
@@ -48,7 +48,7 @@ class _ChatViewWidgetState extends State<ChatViewWidget> {
     return Column(
       children: <Widget>[
         MessagesViewWidget(
-          messagesStream: messagesStream,
+          messagesStream: _messagesStream,
         ),
         SizedBox(height: 10),
         Divider(height: 1.0),
@@ -95,7 +95,7 @@ class _ChatViewWidgetState extends State<ChatViewWidget> {
 
   void _makeFetchRequest() async {
     List<Message> messageList = await _httpMessages.fetchMessages();
-    messagesStream.add(messageList);
+    _messagesStream.add(messageList);
   }
 
   void _handleSubmitted(String text) {

@@ -6,14 +6,15 @@ import 'package:message_app/models/chat_room.dart';
 import 'package:message_app/pages/chatting_page/chatting_page.dart';
 import 'package:message_app/utils/api/http_chatrooms.dart';
 
-class ListWidget extends StatefulWidget {
+class ChatroomListWidget extends StatefulWidget {
   @override
-  _ListWidgetState createState() => _ListWidgetState();
+  _ChatroomListWidgetState createState() => _ChatroomListWidgetState();
 }
 
-class _ListWidgetState extends State<ListWidget> {
-  HttpChatrooms _httpChatrooms = HttpChatrooms();
+class _ChatroomListWidgetState extends State<ChatroomListWidget> {
   StreamController<List<ChatRoom>> _events;
+  HttpChatrooms _httpChatrooms = HttpChatrooms();
+
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _ListWidgetState extends State<ListWidget> {
                             ),
                             orderedList[index].lastTime != null
                                 ? Text(
-                                    "${DateFormat('kk:mm:a').format(orderedList[index].lastTime)}",
+                                    "${DateFormat('kk:mm').format(orderedList[index].lastTime)}",
                                     style: TextStyle(fontSize: 12.0),
                                   )
                                 : Container(),

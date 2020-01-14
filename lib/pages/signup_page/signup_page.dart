@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:message_app/common/showDialogSingleButton.dart';
-import 'package:message_app/pages/signup_page/password_field.dart';
-import 'package:message_app/pages/signup_page/username_field.dart';
+import 'package:message_app/pages/signup_page/userinput_field.dart';
 import 'package:message_app/utils/api/auth_login.dart';
 import 'package:message_app/utils/api/auth_signup.dart';
 import 'package:message_app/pages/home_page.dart';
@@ -17,8 +16,8 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +34,16 @@ class _SignupPageState extends State<SignupPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            UsernameField(usernameController: _usernameController),
-            PasswordField(passwordController: _passwordController),
+            UserInputField(
+              usernameController: _usernameController,
+              labelText: "username",
+              obscureTextRequired: false,
+            ),
+            UserInputField(
+              usernameController: _passwordController,
+              labelText: "password",
+              obscureTextRequired: true,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
